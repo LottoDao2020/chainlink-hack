@@ -7,17 +7,18 @@
     "console:dev": "npx truffle console --network cldev",
     "console:live": "npx truffle console --network live",
     "depcheck": "echo '@chainlink/box' && depcheck --ignore-dirs=build/contracts || true",
-    "solhint": "solhint ./contracts/**/*.sol",
+    "solhint": "npx solhint ./contracts/**/*.sol",
     "lint": "yarn solhint",
     "migrate:dev": "npx truffle migrate --reset --network cldev",
     "migrate:live": "npx truffle migrate --network live",
-    "test": "NODE_ENV=test npx truffle test"
+    "test": "NODE_ENV=test npx truffle test --network cldev"
   },
   "license": "MIT",
   "dependencies": {
     "@chainlink/contracts": "^0.0.8",
     "@openzeppelin/contracts": "^3.1.0",
-    "@truffle/hdwallet-provider": "^1.0.40"
+    "@truffle/hdwallet-provider": "^1.0.40",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@chainlink/belt": "^0.0.1",
