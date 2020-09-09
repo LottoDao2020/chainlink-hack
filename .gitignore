@@ -3,3 +3,9 @@ node_modules/
 
 # VIM
 *.swp
+
+# Build
+build/
+
+# .env
+.env
