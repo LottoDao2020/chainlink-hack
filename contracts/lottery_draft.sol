@@ -22,6 +22,10 @@ contract Lottery {
 	totalNum++;
     }
 
+    function buy(uint64 []) external payable {
+	totalNum++;
+    }
+
     function validate(address _entries) private view returns(bool) {
         bool winning = false;
 /*        for(uint i = 0; i < 10; i++) {
