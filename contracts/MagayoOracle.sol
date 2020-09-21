@@ -160,32 +160,20 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     // uint256 nextDraw;
   }
 
-  struct Oracle{
-    address oracleAddress;
-    bytes32 bytes32JobId;
-    bytes32 uint256JobId;
-    bytes32 boolJobId;
-    uint256 oraclePayment;
-  }
+  // Oracle Info
+  address oracleAddress = 0x2f90A6D021db21e1B2A077c5a37B3C7E75D15b7e;
+  bytes32 bytes32JobId = "50fc4215f89443d185b061e5d7af9490";
+  bytes32 uint256JobId = "29fa9aa13bf1468788b7cc4a500a45b8";
+  bytes32 boolJobId = "6d914edc36e14d6c880c9c55bda5bc04";
+  uint256 oraclePayment = 0.1 * 10 ** 18; // 0.1 LINK;
 
   mapping(bytes32 => Game) public games;
-
-  mapping(bytes32 => Oracle) public oracles;
 
   bytes32 public oracleName;
   bytes32 public game;
 
-  constructor(string memory _oracleName, address _oracleAddress, string memory _bytes32JobId, string memory _uint256JobId, string memory _boolJobId, string memory _game, uint256 _duration) public {
+  constructor(string memory _game, uint256 _duration) public {
     setPublicChainlinkToken();
-
-    // Oracle
-    oracleName = stringToBytes32(_oracleName);
-    Oracle storage oracle = oracles[oracleName];
-    oracle.oracleAddress = _oracleAddress;
-    oracle.bytes32JobId = stringToBytes32(_bytes32JobId);
-    oracle.uint256JobId = stringToBytes32(_uint256JobId);
-    oracle.boolJobId = stringToBytes32(_boolJobId);
-    oracle.oraclePayment = 0.1 * 10 ** 18; // 0.1 LINK
 
     // Game
     game = stringToBytes32(_game);
@@ -212,10 +200,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestName(string calldata _apiKey, string calldata _game) public {
     require(games[game].name == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].bytes32JobId, address(this), this.fulfillName.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(bytes32JobId, address(this), this.fulfillName.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "name");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestName(requestId);
   }
 
@@ -226,10 +214,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestCountry(string calldata _apiKey, string calldata _game) public {
     require(games[game].country == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].bytes32JobId, address(this), this.fulfillCountry.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(bytes32JobId, address(this), this.fulfillCountry.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "country");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestCountry(requestId);
   }
 
@@ -240,10 +228,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestState(string calldata _apiKey, string calldata _game) public {
     require(games[game].state == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].bytes32JobId, address(this), this.fulfillState.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(bytes32JobId, address(this), this.fulfillState.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "state");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestState(requestId);
   }
 
@@ -254,10 +242,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestMainMin(string calldata _apiKey, string calldata _game) public {
     require(games[game].mainMin == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillMainMin.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillMainMin.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "main_min");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestMainMin(requestId);
   }
 
@@ -268,10 +256,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestMainMax(string calldata _apiKey, string calldata _game) public {
     require(games[game].mainMax == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillMainMax.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillMainMax.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "main_max");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestMainMax(requestId);
   }
 
@@ -282,10 +270,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestMainDrawn(string calldata _apiKey, string calldata _game) public {
     require(games[game].mainDrawn == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillMainDrawn.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillMainDrawn.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "main_drawn");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestMainDrawn(requestId);
   }
 
@@ -296,10 +284,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestBonusMin(string calldata _apiKey, string calldata _game) public {
     require(games[game].bonusMin == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillBonusMin.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillBonusMin.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "bonus_min");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestBonusMin(requestId);
   }
 
@@ -310,10 +298,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestBonusMax(string calldata _apiKey, string calldata _game) public {
     require(games[game].bonusMax == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillBonusMax.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillBonusMax.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "bonus_max");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestBonusMax(requestId);
   }
 
@@ -324,10 +312,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestBonusDrawn(string calldata _apiKey, string calldata _game) public {
     require(games[game].bonusDrawn == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillBonusDrawn.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillBonusDrawn.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "bonus_drawn");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestBonusDrawn(requestId);
   }
 
@@ -337,10 +325,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
   }
 
   function requestSameBalls(string calldata _apiKey, string calldata _game) public {
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].boolJobId, address(this), this.fulfillSameBalls.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(boolJobId, address(this), this.fulfillSameBalls.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "same_balls");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestSameBalls(requestId);
   }
 
@@ -351,10 +339,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestDigits(string calldata _apiKey, string calldata _game) public {
     require(games[game].digits == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillDigits.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillDigits.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "digits");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestDigits(requestId);
   }
 
@@ -365,10 +353,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   function requestDrawn(string calldata _apiKey, string calldata _game) public {
     require(games[game].drawn == 0, "already-got-value" );
-    Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].uint256JobId, address(this), this.fulfillDrawn.selector);
+    Chainlink.Request memory req = buildChainlinkRequest(uint256JobId, address(this), this.fulfillDrawn.selector);
     req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
     req.add("path", "drawn");
-    bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+    bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
     emit RequestDrawn(requestId);
   }
 
@@ -378,10 +366,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
   }
 
   // function requestIsOption(string calldata _apiKey, string calldata _game) public {
-  //   Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].boolJobId, address(this), this.fulfillIsOption.selector);
+  //   Chainlink.Request memory req = buildChainlinkRequest(boolJobId, address(this), this.fulfillIsOption.selector);
   //   req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
   //   req.add("path", "is_option");
-  //   bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+  //   bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
   //   emit RequestIsOption(requestId);
   // }
 
@@ -392,10 +380,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   // function requestOptionDesc(string calldata _apiKey, string calldata _game) public {
   //   require(games[game].optionDesc == 0, "already-got-value" );
-  //   Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].bytes32JobId, address(this), this.fulfillOptionDesc.selector);
+  //   Chainlink.Request memory req = buildChainlinkRequest(bytes32JobId, address(this), this.fulfillOptionDesc.selector);
   //   req.add("get", string(abi.encodePacked("https://www.magayo.com/api/info.php", "?api_key=", _apiKey, "&game=", _game)));
   //   req.add("path", "option_desc");
-  //   bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+  //   bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
   //   emit RequestOptionDesc(requestId);
   // }
 
@@ -406,10 +394,10 @@ contract MagayoOracle is ChainlinkClient, Ownable {
 
   // function requestNextDraw(string calldata _apiKey, string calldata _game) public {
   //   require(games[game].nextDraw == 0, "already-got-value" );
-  //   Chainlink.Request memory req = buildChainlinkRequest(oracles[oracleName].bytes32JobId, address(this), this.fulfillNextDraw.selector);
+  //   Chainlink.Request memory req = buildChainlinkRequest(bytes32JobId, address(this), this.fulfillNextDraw.selector);
   //   req.add("get", string(abi.encodePacked("https://www.magayo.com/api/next_draw.php", "?api_key=", _apiKey, "&game=", _game)));
   //   req.add("path", "next_draw");
-  //   bytes32 requestId = sendChainlinkRequestTo(oracles[oracleName].oracleAddress, req, oracles[oracleName].oraclePayment);
+  //   bytes32 requestId = sendChainlinkRequestTo(oracleAddress, req, oraclePayment);
   //   emit RequestNextDraw(requestId);
   // }
 
