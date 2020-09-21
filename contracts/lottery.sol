@@ -1,8 +1,12 @@
 pragma solidity ^0.6;
 pragma experimental ABIEncoderV2;
 
+import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 interface IMagayoOracle{
   function game() external returns(bytes32);
+  function duration() external returns(uint);
   function games(bytes32 _game) external returns(Game memory);
 
   struct Game {
@@ -21,14 +25,24 @@ interface IMagayoOracle{
   }
 }
 
-contract Lottery {
+interface IRandomNumber {
+  function getRandomNumber(uint256 userProvidedSeed) external returns (bytes32 requestId);
+}
+
+contract Lottery is ChainlinkClient, Ownable {
   mapping (address => mapping(uint32 => uint64 [][])) entries;
   uint32 public drawNo;
   uint8 public prizePerEntry;
   address magayoOracle;
+  address randomNumber;
   enum LOTTERY_STATE { OPEN, CLOSED, GETTING_RANDOMNUMBER }
   //  mapping (address => mapping(uint16 => Reward[])) results;
   mapping(address => mapping(uint32 => bool)) claims;
+
+  // Rinkeby
+  uint256 public ORACLE_PAYMENT = 0.1 * 10 ** 18;
+  address CHAINLINK_ALARM_ORACLE = 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e;
+  bytes32 CHAINLINK_ALARM_JOB_ID = "4fff47c3982b4babba6a7dd694c9b204";
 
   struct Draw{
     LOTTERY_STATE state;
@@ -36,25 +50,31 @@ contract Lottery {
     uint32[] numbers;
   }
 
-  constructor(uint8 _prizePerEntry, address _magayoOracle) public {
+  mapping(uint32 => Draw) draws;
+
+  constructor(uint8 _prizePerEntry, address _magayoOracle, address _randomNumber) public {
     prizePerEntry = _prizePerEntry;
+    magayoOracle = _magayoOracle;
+    randomNumber = _randomNumber;
+  }
+
+  function setMagayoOracle(address _magayoOracle) external onlyOwner{
     magayoOracle = _magayoOracle;
   }
 
-  function setMagayoOracle(address _magayoOracle) public {
-    magayoOracle = _magayoOracle;
+  function setPrice(uint8 _prizePerEntry) external onlyOwner{
+    prizePerEntry = _prizePerEntry;
   }
 
-  function setPrice(uint8 _prizePerEntry) public {
-    prizePerEntry = _prizePerEntry;
+  function setRandomNumber(address _randomNumber) external onlyOwner{
+    randomNumber = _randomNumber;
   }
 
   IMagayoOracle iMagayoOracle = IMagayoOracle(magayoOracle);
   bytes32 game = iMagayoOracle.game();
+  uint duration = iMagayoOracle.duration();
   uint256 mainDrawn = iMagayoOracle.games(game).mainDrawn;
   uint256 bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
-
-  mapping(uint32 => Draw) draws;
 
   event LogBuy(address currentUser, uint eValue, uint32[] numbers);
   event LogClaim(address currentUser, uint32 drawNo, uint reward);
@@ -142,15 +162,34 @@ contract Lottery {
   //   }
   // }
 
-  function mockData (uint8 test1, uint8 test2) public{
-    //	    results[test1] = test1;
-    //	    draws[1] = test2;
+  function startNewLottery() external onlyOwner{
+    require(draws[drawNo].state == LOTTERY_STATE.OPEN, "lottery-not-open");
+    Chainlink.Request memory req = buildChainlinkRequest(CHAINLINK_ALARM_JOB_ID, address(this), this.fulfillAlarm.selector);
+    req.addUint("until", now + duration);
+    sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
   }
 
-  function setOracle(address _oracle)  external{
-    /*        address onlyOwner;
-    oracle = _oracle; */
-    //    }
+  function fulfillAlarm(bytes32 _requestId) external recordChainlinkFulfillment(_requestId) {
+    require(draws[drawNo].state == LOTTERY_STATE.OPEN, "lottery-not-open");
+    draws[drawNo].state = LOTTERY_STATE.GETTING_RANDOMNUMBER;
+    IRandomNumber iRandomNumber = IRandomNumber(randomNumber);
+    iRandomNumber.getRandomNumber(now + block.number + drawNo + address(this).balance);
+  }
 
+  function updateDrawNumbers(uint _number) external {
+    require(msg.sender == randomNumber, "invalid-address");
+    require(draws[drawNo].state == LOTTERY_STATE.GETTING_RANDOMNUMBER, "lottery-not-getting-random-number");
+    require(_number > 0, "wrong-number");
+    draws[drawNo].state = LOTTERY_STATE.CLOSED;
+    draws[drawNo].rewards = address(this).balance;
+    for(uint32 i = 0; i < mainDrawn; i++){
+      draws[drawNo].numbers.push(uint32(_number % 100));
+      _number = _number / 100;
+    }
+    for(uint32 i = 0; i < bonusDrawn; i++){
+      draws[drawNo].numbers.push(uint32(_number % 100));
+      _number = _number / 100;
+    }
+    drawNo ++;
   }
 }

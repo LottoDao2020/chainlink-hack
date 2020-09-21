@@ -193,7 +193,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     games[game].duration = _duration;
   }
 
-  function requestAll(string calldata _apiKey, string calldata _game) public {
+  function requestAll(string calldata _apiKey, string calldata _game) external {
     requestName(_apiKey, _game);
     requestCountry(_apiKey, _game);
     requestState(_apiKey, _game);
@@ -219,7 +219,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestName(requestId);
   }
 
-  function fulfillName(bytes32 _requestId, bytes32 _name) public recordChainlinkFulfillment(_requestId){
+  function fulfillName(bytes32 _requestId, bytes32 _name) external recordChainlinkFulfillment(_requestId){
     emit FulfillName(_requestId, _name);
     games[game].name = _name;
   }
@@ -233,7 +233,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestCountry(requestId);
   }
 
-  function fulfillCountry(bytes32 _requestId, bytes32 _country) public recordChainlinkFulfillment(_requestId){
+  function fulfillCountry(bytes32 _requestId, bytes32 _country) external recordChainlinkFulfillment(_requestId){
     emit FulfillCountry(_requestId, _country);
     games[game].country = _country;
   }
@@ -247,7 +247,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestState(requestId);
   }
 
-  function fulfillState(bytes32 _requestId, bytes32 _state) public recordChainlinkFulfillment(_requestId){
+  function fulfillState(bytes32 _requestId, bytes32 _state) external recordChainlinkFulfillment(_requestId){
     emit FulfillState(_requestId, _state);
     games[game].state = _state;
   }
@@ -261,7 +261,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestMainMin(requestId);
   }
 
-  function fulfillMainMin(bytes32 _requestId, uint256 _mainMin) public recordChainlinkFulfillment(_requestId){
+  function fulfillMainMin(bytes32 _requestId, uint256 _mainMin) external recordChainlinkFulfillment(_requestId){
     emit FulfillMainMin(_requestId, _mainMin);
     games[game].mainMin = _mainMin;
   }
@@ -275,7 +275,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestMainMax(requestId);
   }
 
-  function fulfillMainMax(bytes32 _requestId, uint256 _mainMax) public recordChainlinkFulfillment(_requestId){
+  function fulfillMainMax(bytes32 _requestId, uint256 _mainMax) external recordChainlinkFulfillment(_requestId){
     emit FulfillMainMax(_requestId, _mainMax);
     games[game].mainMax = _mainMax;
   }
@@ -289,7 +289,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestMainDrawn(requestId);
   }
 
-  function fulfillMainDrawn(bytes32 _requestId, uint256 _mainDrawn) public recordChainlinkFulfillment(_requestId){
+  function fulfillMainDrawn(bytes32 _requestId, uint256 _mainDrawn) external recordChainlinkFulfillment(_requestId){
     emit FulfillMainDrawn(_requestId, _mainDrawn);
     games[game].mainDrawn = _mainDrawn;
   }
@@ -303,7 +303,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestBonusMin(requestId);
   }
 
-  function fulfillBonusMin(bytes32 _requestId, uint256 _bonusMin) public recordChainlinkFulfillment(_requestId){
+  function fulfillBonusMin(bytes32 _requestId, uint256 _bonusMin) external recordChainlinkFulfillment(_requestId){
     emit FulfillBonusMin(_requestId, _bonusMin);
     games[game].bonusMin = _bonusMin;
   }
@@ -317,7 +317,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestBonusMax(requestId);
   }
 
-  function fulfillBonusMax(bytes32 _requestId, uint256 _bonusMax) public recordChainlinkFulfillment(_requestId){
+  function fulfillBonusMax(bytes32 _requestId, uint256 _bonusMax) external recordChainlinkFulfillment(_requestId){
     emit FulfillBonusMax(_requestId, _bonusMax);
     games[game].bonusMax = _bonusMax;
   }
@@ -331,7 +331,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestBonusDrawn(requestId);
   }
 
-  function fulfillBonusDrawn(bytes32 _requestId, uint256 _bonusDrawn) public recordChainlinkFulfillment(_requestId){
+  function fulfillBonusDrawn(bytes32 _requestId, uint256 _bonusDrawn) external recordChainlinkFulfillment(_requestId){
     emit FulfillBonusDrawn(_requestId, _bonusDrawn);
     games[game].bonusDrawn = _bonusDrawn;
   }
@@ -344,7 +344,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestSameBalls(requestId);
   }
 
-  function fulfillSameBalls(bytes32 _requestId, bool _sameBalls) public recordChainlinkFulfillment(_requestId){
+  function fulfillSameBalls(bytes32 _requestId, bool _sameBalls) external recordChainlinkFulfillment(_requestId){
     emit FulfillSameBalls(_requestId, _sameBalls);
     games[game].sameBalls = _sameBalls;
   }
@@ -358,7 +358,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestDigits(requestId);
   }
 
-  function fulfillDigits(bytes32 _requestId, uint256 _digits) public recordChainlinkFulfillment(_requestId){
+  function fulfillDigits(bytes32 _requestId, uint256 _digits) external recordChainlinkFulfillment(_requestId){
     emit FulfillDigits(_requestId, _digits);
     games[game].digits = _digits;
   }
@@ -372,7 +372,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestDrawn(requestId);
   }
 
-  function fulfillDrawn(bytes32 _requestId, uint256 _drawn) public recordChainlinkFulfillment(_requestId){
+  function fulfillDrawn(bytes32 _requestId, uint256 _drawn) external recordChainlinkFulfillment(_requestId){
     emit FulfillDrawn(_requestId, _drawn);
     games[game].drawn = _drawn;
   }
@@ -385,7 +385,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
   //   emit RequestIsOption(requestId);
   // }
 
-  // function fulfillIsOption(bytes32 _requestId, bool _isOption) public recordChainlinkFulfillment(_requestId){
+  // function fulfillIsOption(bytes32 _requestId, bool _isOption) external recordChainlinkFulfillment(_requestId){
   //   emit FulfillIsOption(_requestId, _isOption);
   //   games[game].isOption = _isOption;
   // }
@@ -399,7 +399,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
   //   emit RequestOptionDesc(requestId);
   // }
 
-  // function fulfillOptionDesc(bytes32 _requestId, bytes16 _optionDesc) public recordChainlinkFulfillment(_requestId){
+  // function fulfillOptionDesc(bytes32 _requestId, bytes16 _optionDesc) external recordChainlinkFulfillment(_requestId){
   //   emit FulfillOptionDesc(_requestId, _optionDesc);
   //   games[game].optionDesc = _optionDesc;
   // }
@@ -413,13 +413,13 @@ contract MagayoOracle is ChainlinkClient, Ownable {
   //   emit RequestNextDraw(requestId);
   // }
 
-  // function fulfillNextDraw(bytes32 _requestId, bytes32 _nextDraw) public recordChainlinkFulfillment(_requestId){
+  // function fulfillNextDraw(bytes32 _requestId, bytes32 _nextDraw) external recordChainlinkFulfillment(_requestId){
   //   emit FulfillNextDraw(_requestId, _nextDraw);
   //   string memory nextDraw = bytes32ToString(_nextDraw);
   //   games[game].nextDraw = dt.toTimestamp(nextDraw[:3], nextDraw[5:6], nextDraw[9:9]);
   // }
 
-  function withdrawLink() public onlyOwner {
+  function withdrawLink() external onlyOwner {
     LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
     require(link.transfer(msg.sender, link.balanceOf(address(this))), "Unable to transfer");
   }
@@ -430,7 +430,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     bytes4 _callbackFunctionId,
     uint256 _expiration
   )
-  public
+  external
   onlyOwner
   {
     cancelChainlinkRequest(_requestId, _payment, _callbackFunctionId, _expiration);
