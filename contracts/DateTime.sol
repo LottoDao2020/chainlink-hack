@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.6;
 
-contract DateTime {
+library DateTime {
   /*
   *  Date and Time utilities for ethereum contracts
   *
