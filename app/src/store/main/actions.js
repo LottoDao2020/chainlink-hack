@@ -6,15 +6,15 @@ const { utils } = ethers;
 const addresses = require('src/utils/addresses.json');
 const Web3 = require('web3'); // required for Open Zeppelin GSN provider
 const { GSNProvider } = require('@openzeppelin/gsn-provider');
-const { proxies } = require('src/../../.openzeppelin/mainnet.json');
+// const { proxies } = require('src/../../.openzeppelin/mainnet.json');
 
 const abi = {
   // logic: require('src/../../build/contracts/ProvideLiquidity.json').abi,
   // factory: require('src/../../build/contracts/ProvideLiquidityFactory.json').abi,
 };
 
-addresses.logic = proxies['bancor-fiat-on-ramp/ProvideLiquidity'][0].address;
-addresses.factory = proxies['bancor-fiat-on-ramp/ProvideLiquidityFactory'][0].address;
+// addresses.logic = proxies['bancor-fiat-on-ramp/ProvideLiquidity'][0].address;
+// addresses.factory = proxies['bancor-fiat-on-ramp/ProvideLiquidityFactory'][0].address;
 
 
 /**
@@ -70,38 +70,40 @@ export async function setEthereumData({ commit }, provider) {
 
   // Create GSN contract instances
   const web3gsn = new Web3(new GSNProvider(provider));
-  const contracts = {
-    Logic: new web3gsn.eth.Contract(abi.logic, addresses.logic),
-    Factory: new web3gsn.eth.Contract(abi.factory, addresses.factory),
-  };
-  commit('setContracts', contracts);
+  // const contracts = {
+  //   Logic: new web3gsn.eth.Contract(abi.logic, addresses.logic),
+  //   Factory: new web3gsn.eth.Contract(abi.factory, addresses.factory),
+  // };
+  // commit('setContracts', contracts);
 
   // Get regular contract instances with ethers to check user's proxy address
-  const Factory = new ethers.Contract(addresses.factory, abi.factory, ethersProvider);
-  const proxyAddress = await Factory.getContract(userAddress);
+  // const Factory = new ethers.Contract(addresses.factory, abi.factory, ethersProvider);
+  // const proxyAddress = await Factory.getContract(userAddress);
 
   // If they have a proxy, get proxy data
   let ethBalance;
   let ethTokenBalance;
   let bntBalance;
   let ethBntBalance;
+  let ticketNumber;
 
   const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
   const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
   const EthBntContract = createContract(addresses.ETHBNT, 'ethbnt', ethersProvider);
-  if (proxyAddress !== ethers.constants.AddressZero) {
-    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
-    bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
-    ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
-    ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
-  }
+  // if (proxyAddress !== ethers.constants.AddressZero) {
+  //   ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
+  //   bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
+  //   ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
+  //   ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
+  // }
 
   const proxyData = {
-    address: proxyAddress,
+    address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
     ethBalance,
     ethTokenBalance,
     bntBalance,
     ethBntBalance,
+    ticketNumber,
   };
   console.log('User proxy data: ', proxyData); // eslint-disable-line no-console
   commit('setProxyData', proxyData);
@@ -143,6 +145,73 @@ export async function checkBalances({ commit, state }, proxyAddress) {
     ethTokenBalance,
     bntBalance,
     ethBntBalance,
+  };
+
+  commit('setProxyData', proxyData);
+}
+
+export async function setRewardBalance({ commit, state }, proxyAddress, rewardBalance) {
+  console.log('Set Reward Balance...'); // eslint-disable-line no-console
+  const ethersProvider = new ethers.providers.Web3Provider(state.provider);
+  let ethBalance;
+  // let ethTokenBalance;
+  // let bntBalance;
+  let ethBntBalance;
+
+  // const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
+  // const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
+  if (proxyAddress !== ethers.constants.AddressZero) {
+    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
+    // bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
+    // ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
+    ethBntBalance = rewardBalance;
+  }
+
+  const proxyData = {
+    address: proxyAddress,
+    ethBalance,
+    ethTokenBalance: 0,
+    bntBalance: 0,
+    ethBntBalance,
+  };
+
+  commit('setProxyData', proxyData);
+}
+
+function createGround(width, height) {
+  const result = [];
+  let i;
+  let j;
+  for (i = 0; i < width; i += 1) {
+    result[i] = [];
+    for (j = 0; j < height; j += 1) {
+      result[i][j] = Math.floor(Math.random() * 100) + 1;
+    }
+  }
+  return result;
+}
+
+export function showTickets({ commit }, ticketsAmount) {
+  let arr = [];
+  let r;
+  arr = createGround(ticketsAmount, 7);
+  // if (proxyAddress !== ethers.constants.AddressZero) {
+  // while (arr.length < ticketsAmount) {
+  //   r = Math.floor(Math.random() * 100) + 1;
+  //   if (arr.indexOf(r) === -1) {
+  //     console.log(r);
+  //     arr.push(r);
+  //   }
+  // }
+  // }
+  console.log(arr);
+  const proxyData = {
+    address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
+    ethBalance: 0,
+    ethTokenBalance: 0,
+    bntBalance: 0,
+    ethBntBalance: 0,
+    ticketNumber: arr,
   };
 
   commit('setProxyData', proxyData);

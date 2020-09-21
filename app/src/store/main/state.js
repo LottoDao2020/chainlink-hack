@@ -7,6 +7,7 @@ export default function () {
       bntBalance: undefined,
       ethBntBalance: undefined,
       ethTokenBalance: undefined,
+      ticketNumber: undefined,
     },
     provider: {}, // raw provider for GSN
     signer: {}, // ethers.js signer

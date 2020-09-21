@@ -33,6 +33,7 @@ module.exports = {
   rules: {
     'no-param-reassign': 'off',
     'no-unused-vars': 'off',
+    'no-trailing-spaces': 'off',
     'import/first': 'off',
     'import/named': 'error',
     'import/namespace': 'error',

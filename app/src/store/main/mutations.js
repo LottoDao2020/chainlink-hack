@@ -27,6 +27,7 @@ export function setProxyData(state, proxyData) {
   state.proxy.bntBalance = proxyData.bntBalance;
   state.proxy.ethBntBalance = proxyData.ethBntBalance;
   state.proxy.ethTokenBalance = proxyData.ethTokenBalance;
+  state.proxy.ticketNumber = proxyData.ticketNumber;
 }
 
 export function setProxyAddress(state, address) {

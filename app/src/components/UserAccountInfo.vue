@@ -7,8 +7,7 @@
             Account Balances
           </h4>
           <div class="text-caption text-italic">
-            Balances of your proxy contract which is used to enter and exit liquidity
-            pools and hold the associated funds
+            Balances of your contract which is used to attend the draw and reamining in the wallet
           </div>
         </q-card-section>
         <q-card-section>
@@ -20,28 +19,36 @@
               {{ ethBalance }} ETH
             </div>
           </div>
-          <div class="row justify-between">
+          <!-- <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
-              Bancor Network Token:
+              Token in the Pool:
             </div>
             <div class="col text-left">
-              {{ bntBalance }} BNT
+              {{ bntBalance }} TOKEN
             </div>
-          </div>
-          <div class="row justify-between">
+          </div> -->
+          <!-- <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
               Ether Token:
             </div>
             <div class="col text-left">
               {{ ethTokenBalance }} ETH Token
             </div>
+          </div> -->
+          <div class="row justify-between">
+            <div class="col-xs-5 text-left text-bold">
+              Token can be claimed:
+            </div>
+            <div class="col text-left">
+              {{ ethBntBalance }} TOKEN
+            </div>
           </div>
           <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
-              ETHBNT Pool Token:
+              Ticket Number:
             </div>
             <div class="col text-left">
-              {{ ethBntBalance }} ETHBNT
+              {{ ticketNumber }} 
             </div>
           </div>
         </q-card-section>
@@ -69,8 +76,9 @@ export default {
       // User balances
       ethBalance: (state) => state.main.proxy.ethBalance,
       bntBalance: (state) => state.main.proxy.bntBalance,
-      ethTokenBalance: (state) => state.main.proxy.ethTokenBalance,
+      // ethTokenBalance: (state) => state.main.proxy.ethTokenBalance,
       ethBntBalance: (state) => state.main.proxy.ethBntBalance,
+      ticketNumber: (state) => state.main.proxy.ticketNumber,
     }),
   },
 

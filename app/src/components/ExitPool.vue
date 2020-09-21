@@ -45,9 +45,9 @@
       style="max-width: 450px"
     >
       <q-card-section>
-        <h6>Step 3 (After some time...)</h6>
+        <h6>Step 4 (After some time...)</h6>
         <h4 class="text-bold">
-          Exit the Pool
+          Claim
         </h4>
       </q-card-section>
 
@@ -77,7 +77,7 @@
         </q-input>
         <q-btn
           color="primary"
-          label="Exit Pool"
+          label="Claim"
           :loading="isLoading"
           :disabled="ethBntBalance === 0"
           @click="exitPool"
@@ -133,7 +133,7 @@ export default {
       this.recipientAddress = this.proxyAddress;
     },
 
-    async exitPool() {
+    async exitPool({ commit }) {
       /* eslint-disable no-console */
       this.isLoading = true;
       console.log('Initializing pool exit...');
@@ -150,32 +150,40 @@ export default {
         darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
       });
 
-      try {
-        console.log('Requesting signature and sending transaction...');
-        this.FactoryContract.methods.exitAndWithdraw(ethBntBalance, this.recipientAddress)
-          .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
-          .on('transactionHash', async (txHash) => {
-            console.log('txHash: ', txHash);
-            notify.hash(txHash);
-          })
-          .once('receipt', async (receipt) => {
-            console.log('Transaction receipt: ', receipt);
-            await this.$store.dispatch('main/checkBalances', this.proxyAddress);
-            this.isLoading = false;
-            this.isExitComplete = true;
-          })
-          .catch((err) => {
-            console.log('Something went wrong exiting pool. See the error message below.');
-            console.error(err);
-            this.notifyUser('negative', err.message);
-            this.isLoading = false;
-          });
-      } catch (err) {
-        console.log('Something went wrong exiting pool. See the error message below.');
-        console.error(err);
-        this.notifyUser('negative', err.message);
-        this.isLoading = false;
-      }
+
+      // await this.$store.dispatch('main/setEthereumData', this.proxyAddress);
+      console.log(this.proxyAddress);
+      await this.$store.dispatch('main/setRewardBalance', this.proxyAddress, 100);
+
+      // try {
+      //   console.log('Requesting signature and sending transaction...');
+      //   this.FactoryContract.methods.exitAndWithdraw(ethBntBalance, this.recipientAddress)
+      //     .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
+      //     .on('transactionHash', async (txHash) => {
+      //       console.log('txHash: ', txHash);
+      //       notify.hash(txHash);
+      //     })
+      //     .once('receipt', async (receipt) => {
+      //       console.log('Transaction receipt: ', receipt);
+      //       await this.$store.dispatch('main/checkBalances', this.proxyAddress);
+      //       this.isLoading = false;
+      //       this.isExitComplete = true;
+      //     })
+      //     .then((data) => {
+            
+      //     })
+      //     .catch((err) => {
+      //       console.log('Something went wrong exiting pool. See the error message below.');
+      //       console.error(err);
+      //       this.notifyUser('negative', err.message);
+      //       this.isLoading = false;
+      //     });
+      // } catch (err) {
+      //   console.log('Something went wrong exiting pool. See the error message below.');
+      //   console.error(err);
+      //   this.notifyUser('negative', err.message);
+      //   this.isLoading = false;
+      // }
       /* eslint-disable no-console */
     },
   },

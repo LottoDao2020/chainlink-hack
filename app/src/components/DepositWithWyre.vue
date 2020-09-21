@@ -30,11 +30,44 @@
             label="Deposit Funds"
             :loading="isDepositLoading"
             :disabled="!Boolean(depositAmount) || depositAmount <= 0"
-            @click="startDeposit"
+            @click="startLuckyDraw"
           />
           <div class="text-caption text-italic q-mt-md">
             You will be redirected to Wyre to complete your purchase. Afterwards, Wyre
             will redirect you back here for you to complete Step 2.
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- START THE DRAW -->
+      <q-card
+        class="col text-center q-px-lg q-py-md q-ma-md"
+        style="max-width: 400px"
+      >
+        <q-card-section>
+          <h6>Step 2</h6>
+          <h4 class="text-bold">
+            Start Your Lucky Draw
+          </h4>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model.number="ticketsAmount"
+            class="input"
+            filled
+            label="How many Tickets"
+          />
+        </q-card-section>
+        <q-card-section>
+          <q-btn
+            color="primary"
+            label="Buy"
+            :loading="isDepositLoading"
+            :disabled="!Boolean(ticketsAmount) || ticketsAmount <= 0"
+            @click="startLuckyDraw"
+          />
+          <div class="text-caption text-italic q-mt-md">
+            We will help you to pick up the drawing number for each ticket
           </div>
         </q-card-section>
       </q-card>
@@ -45,9 +78,9 @@
         style="max-width: 400px"
       >
         <q-card-section>
-          <h6>Step 2</h6>
+          <h6>Step 3</h6>
           <h4 class="text-bold">
-            Enter Pool
+            Check Result
           </h4>
         </q-card-section>
         <q-card-section>
@@ -56,16 +89,16 @@
             class="input"
             :disabled="ethBalance === 0"
             :options="pools"
-            label="Select Pool"
+            label="Select Entry"
           />
         </q-card-section>
         <q-card-section>
           <q-btn
             color="primary"
-            label="Enter Pool"
+            label="See Result"
             :loading="isEntryLoading"
             :disabled="!Boolean(selectedPool) || ethBalance === 0"
-            @click="enterPool"
+            @click="checkResult"
           />
           <div
             v-if="ethBalance === 0"
@@ -77,9 +110,7 @@
             v-else
             class="text-caption text-italic q-mt-md"
           >
-            All of your
-            {{ formatCurrency(ethBalance, false, 2, 5) }}
-            ETH will be used to enter this pool
+            Pick the entry and see result
           </div>
         </q-card-section>
       </q-card>
@@ -152,6 +183,7 @@ export default {
       ],
       // User options
       depositAmount: undefined,
+      ticketsAmount: undefined,
       selectedPool: null,
     };
   },
@@ -162,6 +194,7 @@ export default {
       signer: (state) => state.main.signer,
       userAddress: (state) => state.main.userAddress,
       proxyAddress: (state) => state.main.proxy.address,
+      ticketNumber: (state) => state.main.proxy.ticketNumber,
       // User balances
       ethBalance: (state) => state.main.proxy.ethBalance,
       bntBalance: (state) => state.main.proxy.bntBalance,
@@ -190,77 +223,79 @@ export default {
   },
 
   methods: {
-    startDeposit() {
+    startLuckyDraw() {
       this.isDepositLoading = true;
-      try {
-        // Check if we are in dev or prod
-        let wyreUrlPrefix = 'sendwyre';
-        if (process.env.WYRE_ENV === 'dev') {
-          wyreUrlPrefix = 'testwyre';
-        }
 
-        // Define where to redirect to once hosted Widget flow is completed
-        const widgetRedirectUrl = `${window.location.origin}/?isWaitingForPurchase=true`;
+      this.$store.dispatch('main/showTickets', this.ticketsAmount);
 
-        // Define and temporarily save off options used to load the widget
-        const widgetOptions = {
-          dest: `ethereum:${this.proxyAddress}`,
-          destCurrency: 'ETH',
-          sourceAmount: this.depositAmount,
-          paymentMethod: 'debit-card',
-          redirectUrl: widgetRedirectUrl,
-          accountId: process.env.WYRE_ACCOUNT_ID,
-        };
-        this.$q.localStorage.set('widgetDepositOptions', widgetOptions);
+      // try {
+      //   // Check if we are in dev or prod
+      //   let wyreUrlPrefix = 'sendwyre';
+      //   if (process.env.WYRE_ENV === 'dev') {
+      //     wyreUrlPrefix = 'testwyre';
+      //   }
 
-        // Load the new page and exit this function
-        const widgetUrl = `https://pay.${wyreUrlPrefix}.com/purchase?dest=${widgetOptions.dest}&destCurrency=${widgetOptions.destCurrency}&sourceAmount=${widgetOptions.sourceAmount}&paymentMethod=${widgetOptions.paymentMethod}&redirectUrl=${widgetOptions.redirectUrl}&accountId=${widgetOptions.accountId}`;
-        window.location.href = widgetUrl;
-      } catch (err) {
-        console.error(err); // eslint-disable-line no-console
-        this.notifyUser('negative', err.message);
-      } finally {
-        this.isDepositLoading = false;
-      }
+      //   // Define where to redirect to once hosted Widget flow is completed
+      //   const widgetRedirectUrl = `${window.location.origin}/?isWaitingForPurchase=true`;
+
+      //   // Define and temporarily save off options used to load the widget
+      //   const widgetOptions = {
+      //     dest: `ethereum:${this.proxyAddress}`,
+      //     destCurrency: 'ETH',
+      //     sourceAmount: this.depositAmount,
+      //     paymentMethod: 'debit-card',
+      //     redirectUrl: widgetRedirectUrl,
+      //     accountId: process.env.WYRE_ACCOUNT_ID,
+      //   };
+      //   this.$q.localStorage.set('widgetDepositOptions', widgetOptions);
+
+      //   // Load the new page and exit this function
+      //   const widgetUrl = `https://pay.${wyreUrlPrefix}.com/purchase?dest=${widgetOptions.dest}&destCurrency=${widgetOptions.destCurrency}&sourceAmount=${widgetOptions.sourceAmount}&paymentMethod=${widgetOptions.paymentMethod}&redirectUrl=${widgetOptions.redirectUrl}&accountId=${widgetOptions.accountId}`;
+      //   window.location.href = widgetUrl;
+      // } catch (err) {
+      //   console.error(err); // eslint-disable-line no-console
+      //   this.notifyUser('negative', err.message);
+      // } finally {
+      //   this.isDepositLoading = false;
+      // }
     },
 
-    async enterPool() {
+    async checkResult() {
       /* eslint-disable no-console */
       this.isEntryLoading = true;
-      console.log('Initializing pool entry...');
+      console.log('Checking Result...');
 
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
         networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
         darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
       });
-
-      try {
-        console.log('Requesting signature and sending transaction...');
-        this.FactoryContract.methods.enterPool()
-          .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
-          .on('transactionHash', async (txHash) => {
-            console.log('txHash: ', txHash);
-            notify.hash(txHash);
-          })
-          .once('receipt', async (receipt) => {
-            console.log('Transaction receipt: ', receipt);
-            await this.$store.dispatch('main/checkBalances', this.proxyAddress);
-            this.isEntryLoading = false;
-            this.isEntryComplete = true;
-          })
-          .catch((err) => {
-            console.log('Something went wrong entering pool. See the error message below.');
-            console.error(err);
-            this.notifyUser('negative', err.message);
-            this.isEntryLoading = false;
-          });
-      } catch (err) {
-        console.log('Something went wrong entering pool. See the error message below.');
-        console.error(err);
-        this.notifyUser('negative', err.message);
-        this.isEntryLoading = false;
-      }
+      // try {
+      //   console.log('Requesting signature and sending transaction...');
+      //   this.FactoryContract.methods.checkResult()
+      //     .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
+      //     .on('transactionHash', async (txHash) => {
+      //       console.log('txHash: ', txHash);
+      //       notify.hash(txHash);
+      //     })
+      //     .once('receipt', async (receipt) => {
+      //       console.log('Transaction receipt: ', receipt);
+      //       await this.$store.dispatch('main/checkBalances', this.proxyAddress);
+      //       this.isEntryLoading = false;
+      //       this.isEntryComplete = true;
+      //     })
+      //     .catch((err) => {
+      //       console.log('Something went wrong entering pool. See the error message below.');
+      //       console.error(err);
+      //       this.notifyUser('negative', err.message);
+      //       this.isEntryLoading = false;
+      //     });
+      // } catch (err) {
+      //   console.log('Something went wrong entering pool. See the error message below.');
+      //   console.error(err);
+      //   this.notifyUser('negative', err.message);
+      //   this.isEntryLoading = false;
+      // }
       /* eslint-disable no-console */
     },
   },
