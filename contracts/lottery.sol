@@ -35,7 +35,7 @@ contract Lottery is ChainlinkClient, Ownable {
   uint8 public prizePerEntry;
   address magayoOracle;
   address randomNumber;
-  enum LOTTERY_STATE { OPEN, CLOSED, GETTING_RANDOMNUMBER }
+  enum LOTTERY_STATE { CLOSED, OPEN, GETTING_RANDOMNUMBER }
   //  mapping (address => mapping(uint16 => Reward[])) results;
   mapping(address => mapping(uint32 => bool)) claims;
 
@@ -163,7 +163,8 @@ contract Lottery is ChainlinkClient, Ownable {
   // }
 
   function startNewLottery() external onlyOwner{
-    require(draws[drawNo].state == LOTTERY_STATE.OPEN, "lottery-not-open");
+    require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
+    draws[drawNo].state = LOTTERY_STATE.OPEN;
     Chainlink.Request memory req = buildChainlinkRequest(CHAINLINK_ALARM_JOB_ID, address(this), this.fulfillAlarm.selector);
     req.addUint("until", now + duration);
     sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);

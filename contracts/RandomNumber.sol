@@ -52,6 +52,7 @@ contract RandomNumber is VRFConsumerBase, Ownable {
   * Callback function used by VRF Coordinator
   */
   function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+    require(randomness > 0, "wrong-number");
     ILottery iLottery = ILottery(lottery);
     iLottery.updateDrawNumbers(randomness);
   }
