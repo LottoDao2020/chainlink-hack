@@ -1,12 +1,12 @@
 pragma solidity ^0.6.12;
 
 contract Lottery {
-    mapping (address => mapping(uint16 => uint64 [][])) entries;
+    mapping (address => mapping(uint32 => uint64 [][])) entries;
     uint32 drawNo;
     enum LOTTERY_STATE { OPEN, CLOSED, CALCULATING_WINNER }
 	  LOTTERY_STATE lotteryState;
     uint8 prizePerEntry;
-    mapping (address => mapping(uint16 => Reward[])) results;
+//    mapping (address => mapping(uint16 => Reward[])) results;
     mapping(address => mapping(uint32 => bool)) claims;
 
 	struct draw{
@@ -15,7 +15,7 @@ contract Lottery {
 	  uint32[] numbers;
 	}
 
-    interface IMagayoOracle{
+/*    interface IMagayoOracle{
         bytes32 public game;
         mapping(bytes32 => Game) public games;
         
@@ -41,21 +41,22 @@ contract Lottery {
     IMagayoOracle iMagayoOracle = IMagayoOracle(address);
     bytes32 game = iMagayoOracle.game;
     uint256 mainDrawn = iMagayoOracle.games[game].mainDrawn;
-    uint256 bonusDrawn = iMagayoOracle.games[game].bonusDrawn;
-
-    mapping(uint8 => draw) draws;
+    uint256 bonusDrawn = iMagayoOracle.games[game].bonusDrawn; */
+bytes eee;
+    mapping(uint32 => draw) draws;
 
     event LogBuy(address currentUser, uint eValue, bytes entries);
-    event LogClaim(address currentUser, uint32 drawNo, uint reward);
+    event LogClaim(address currentUser, uint32 drawNo, uint reward); 
 
-    function buy(uint64[] numbers) external payable {
+    function buy(uint64[] calldata numbers) external payable {
+         eee="0x3333";
     	require(msg.value >= prizePerEntry, "need-more-Ether");
-    	require(draws[drawNo].LOTTERY_STATE == OPEN, "draw-is-not-open");
+    	require(draws[drawNo].state == LOTTERY_STATE.OPEN);
     	entries[msg.sender][drawNo].push(numbers);
-    	emit LogBuy(currentUser, eValue, entries);
+    	emit LogBuy(msg.sender, msg.value, eee);
     }
 
-    function claim(uint32 drawNo) external returns(uint8 amount) {
+/*    function claim(uint32 drawNo) external returns(uint8 amount) {
         uint8 amount = 0;
         require (draws[drawNo].state != OPEN, "draw-still-open");
         require (results[msg.sender][drawNo].length > 0, "did-not-win");
@@ -90,7 +91,7 @@ contract Lottery {
             }
             uint32 prizeDistribution = calculatePrize(mainWinning, bonusWinning);
             if(prizeDistribution > 0){
-              results.push( prizeDistribution * draws[_drawNo].rewards / 100)
+              results.push( prizeDistribution * draws[_drawNo].rewards / 100);
             }
           }
     }
@@ -98,36 +99,36 @@ contract Lottery {
     function calculatePrize(uint32 mainWinning, uint32 bonusWinning) private view returns(uint32 prizeDistribution){
       if(mainWinning == 7){
         if(bonusWinning == 1){
-         prizeDistribution = 35
+         prizeDistribution = 35;
         }
         else{
-          prizeDistribution = 2
+          prizeDistribution = 2;
         }
      }
       if(mainWinning == 6){
         if(bonusWinning == 1){
-          prizeDistribution = 1
+          prizeDistribution = 1;
         }
         else{
-         prizeDistribution = 2
+         prizeDistribution = 2;
         }
       }
       if(mainWinning == 5){
        if(bonusWinning == 1){
-          prizeDistribution = 2
+          prizeDistribution = 2;
         }
         else{
-          prizeDistribution = 7
+          prizeDistribution = 7;
         }
       }
       if(mainWinning == 4 & bonusWinning == 1){
-        prizeDistribution = 10
+        prizeDistribution = 10;
       }
       if(mainWinning == 3 & bonusWinning == 1){
-        prizeDistribution = 15
+        prizeDistribution = 15;
       }
       if(mainWinning == 2 & bonusWinning == 1){
-        prizeDistribution = 26
+        prizeDistribution = 26;
       }
     }
 
@@ -139,6 +140,6 @@ contract Lottery {
     function setOracle(address _oracle)  external{
 /*        address onlyOwner;
     	oracle = _oracle; */
-    }
+//    }
     
 }
