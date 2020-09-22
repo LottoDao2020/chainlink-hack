@@ -1,13 +1,15 @@
-pragma solidity ^0.6;
+pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-interface IMagayoOracle{
-  function game() external view returns(bytes32);
-  function duration() external view returns(uint);
-  function games(bytes32 _game) external view returns(Game memory);
+interface IMagayoOracle {
+  function game() external view returns (bytes32);
+
+  function duration() external view returns (uint256);
+
+  function games(bytes32 _game) external view returns (Game memory);
 
   struct Game {
     bytes32 name;
@@ -26,31 +28,34 @@ interface IMagayoOracle{
 }
 
 interface IRandomNumber {
-  function getRandomNumber(uint256 userProvidedSeed) external returns (bytes32 requestId);
+  function getRandomNumber(uint256 userProvidedSeed)
+    external
+    returns (bytes32 requestId);
 }
 
 interface IGovernance {
-  function randomNumber() external view returns(address);
-  function magayoOracle() external view returns(address);
+  function randomNumber() external view returns (address);
+
+  function magayoOracle() external view returns (address);
 }
 
 contract Lottery is ChainlinkClient, Ownable {
-  mapping (address => mapping(uint32 => uint64 [][])) entries;
+  mapping(address => mapping(uint32 => uint64[][])) entries;
   uint32 public drawNo;
-  uint public prizePerEntry;
-  enum LOTTERY_STATE { CLOSED, OPEN, GETTING_RANDOMNUMBER }
+  uint256 public prizePerEntry;
+  enum LOTTERY_STATE {CLOSED, OPEN, GETTING_RANDOMNUMBER}
   //  mapping (address => mapping(uint16 => Reward[])) results;
   mapping(address => mapping(uint32 => bool)) claims;
 
   // Rinkeby
-  uint256 public ORACLE_PAYMENT = 0.1 * 10 ** 18;
+  uint256 public ORACLE_PAYMENT = 0.1 * 10**18;
   address CHAINLINK_ALARM_ORACLE = 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e;
   bytes32 CHAINLINK_ALARM_JOB_ID = "4fff47c3982b4babba6a7dd694c9b204";
   IGovernance public iGovernance;
   IMagayoOracle public iMagayoOracle;
   IRandomNumber public iRandomNumber;
 
-  struct Draw{
+  struct Draw {
     LOTTERY_STATE state;
     uint256 rewards;
     uint32[] numbers;
@@ -58,18 +63,18 @@ contract Lottery is ChainlinkClient, Ownable {
 
   mapping(uint32 => Draw) draws;
 
-  constructor(uint _prizePerEntry, address _governance) public {
+  constructor(uint256 _prizePerEntry, address _governance) public {
     prizePerEntry = _prizePerEntry;
     iGovernance = IGovernance(_governance);
     iMagayoOracle = IMagayoOracle(iGovernance.magayoOracle());
     iRandomNumber = IRandomNumber(iGovernance.randomNumber());
   }
 
-  function setPrice(uint _prizePerEntry) external onlyOwner{
+  function setPrice(uint256 _prizePerEntry) external onlyOwner {
     prizePerEntry = _prizePerEntry;
   }
 
-  function setGovernance(address _governance) external onlyOwner{
+  function setGovernance(address _governance) external onlyOwner {
     iGovernance = IGovernance(_governance);
   }
 
@@ -79,8 +84,8 @@ contract Lottery is ChainlinkClient, Ownable {
   // uint256 mainDrawn = iMagayoOracle.games(game).mainDrawn;
   // uint256 bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
 
-  event LogBuy(address currentUser, uint eValue, uint32[] numbers);
-  event LogClaim(address currentUser, uint32 drawNo, uint reward);
+  event LogBuy(address currentUser, uint256 eValue, uint32[] numbers);
+  event LogClaim(address currentUser, uint32 drawNo, uint256 reward);
 
   function buy(uint32[] calldata numbers) external payable {
     require(msg.value >= prizePerEntry, "need-more-Ether");
@@ -165,38 +170,50 @@ contract Lottery is ChainlinkClient, Ownable {
   //   }
   // }
 
-  function startNewLottery() external onlyOwner{
+  function startNewLottery() external onlyOwner {
     require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
     draws[drawNo].state = LOTTERY_STATE.OPEN;
-    Chainlink.Request memory req = buildChainlinkRequest(CHAINLINK_ALARM_JOB_ID, address(this), this.fulfillAlarm.selector);
-    uint duration = iMagayoOracle.duration();
+    Chainlink.Request memory req = buildChainlinkRequest(
+      CHAINLINK_ALARM_JOB_ID,
+      address(this),
+      this.fulfillAlarm.selector
+    );
+    uint256 duration = iMagayoOracle.duration();
     req.addUint("until", now + duration);
     sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
   }
 
-  function fulfillAlarm(bytes32 _requestId) external recordChainlinkFulfillment(_requestId) {
+  function fulfillAlarm(bytes32 _requestId)
+    external
+    recordChainlinkFulfillment(_requestId)
+  {
     require(draws[drawNo].state == LOTTERY_STATE.OPEN, "lottery-not-open");
     draws[drawNo].state = LOTTERY_STATE.GETTING_RANDOMNUMBER;
-    iRandomNumber.getRandomNumber(now + block.number + drawNo + address(this).balance);
+    iRandomNumber.getRandomNumber(
+      now + block.number + drawNo + address(this).balance
+    );
   }
 
-  function updateDrawNumbers(uint _number) external {
+  function updateDrawNumbers(uint256 _number) external {
     require(msg.sender == iGovernance.randomNumber(), "invalid-address");
-    require(draws[drawNo].state == LOTTERY_STATE.GETTING_RANDOMNUMBER, "lottery-not-getting-random-number");
+    require(
+      draws[drawNo].state == LOTTERY_STATE.GETTING_RANDOMNUMBER,
+      "lottery-not-getting-random-number"
+    );
     require(_number > 0, "wrong-number");
     draws[drawNo].state = LOTTERY_STATE.CLOSED;
     draws[drawNo].rewards = address(this).balance;
     bytes32 game = iMagayoOracle.game();
     uint256 mainDrawn = iMagayoOracle.games(game).mainDrawn;
     uint256 bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
-    for(uint32 i = 0; i < mainDrawn; i++){
+    for (uint32 i = 0; i < mainDrawn; i++) {
       draws[drawNo].numbers.push(uint32(_number % 100));
       _number = _number / 100;
     }
-    for(uint32 i = 0; i < bonusDrawn; i++){
+    for (uint32 i = 0; i < bonusDrawn; i++) {
       draws[drawNo].numbers.push(uint32(_number % 100));
       _number = _number / 100;
     }
-    drawNo ++;
+    drawNo++;
   }
 }

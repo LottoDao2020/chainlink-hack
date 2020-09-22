@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.6;
+pragma solidity 0.6.12;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -23,6 +23,4 @@ contract Governance is Ownable {
   function setMagayoOracle(address _magayoOracle) external onlyOwner {
     magayoOracle = _magayoOracle;
   }
-
 }
-
