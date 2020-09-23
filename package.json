@@ -4,14 +4,15 @@
   "description": "A Chainlink example in a Truffle box",
   "scripts": {
     "compile": "npx truffle compile",
-    "console:dev": "npx truffle console --network cldev",
+    "console:dev": "npx truffle console --network rinkeby",
     "console:live": "npx truffle console --network live",
     "depcheck": "echo '@chainlink/box' && depcheck --ignore-dirs=build/contracts || true",
     "solhint": "npx solhint ./contracts/**/*.sol",
     "lint": "yarn solhint",
     "migrate:dev": "npx truffle migrate --reset --network cldev",
     "migrate:live": "npx truffle migrate --network live",
-    "test": "NODE_ENV=test npx truffle test --network cldev"
+    "test": "NODE_ENV=test npx truffle test --network cldev",
+    "prettier:solidity": "prettier --write **/*.sol"
   },
   "license": "MIT",
   "dependencies": {
@@ -27,7 +28,15 @@
     "@openzeppelin/test-helpers": "^0.5.6",
     "chai": "^4.2.0",
     "depcheck": "^0.9.1",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.57",
     "solhint": "^2.1.0",
-    "truffle": "^5.1.5"
+    "truffle": "^5.1.45"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run solhint"
+    }
   }
 }
