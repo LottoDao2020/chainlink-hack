@@ -42,11 +42,11 @@ let provider;
 const allWallets = [
   { walletName: 'metamask' },
   { walletName: 'torus' },
-  { walletName: 'fortmatic', apiKey: process.env.FORTMATIC_API_KEY },
-  { walletName: 'walletConnect', infuraKey: process.env.INFURA_ID },
-  { walletName: 'portis', apiKey: process.env.PORTIS_API_KEY },
-  { walletName: 'authereum' },
-  { walletName: 'squarelink', apiKey: process.env.SQUARELINK_API_KEY },
+  // { walletName: 'fortmatic', apiKey: process.env.FORTMATIC_API_KEY },
+  // { walletName: 'walletConnect', infuraKey: process.env.INFURA_ID },
+  // { walletName: 'portis', apiKey: process.env.PORTIS_API_KEY },
+  // { walletName: 'authereum' },
+  // { walletName: 'squarelink', apiKey: process.env.SQUARELINK_API_KEY },
   { walletName: 'opera' },
   { walletName: 'dapper' },
 ];
@@ -82,7 +82,7 @@ export default {
           onboard = Onboard({
             walletSelect: { wallets: allWallets },
             dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
-            networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
+            networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
             darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
             subscriptions: {
               wallet: (wallet) => { provider = wallet.provider; },
@@ -94,7 +94,7 @@ export default {
           onboard = Onboard({
             walletSelect: { wallets: easyWallets },
             dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
-            networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
+            networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
             darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
             subscriptions: {
               wallet: (wallet) => { provider = wallet.provider; },
@@ -103,13 +103,7 @@ export default {
         }
         await onboard.walletSelect();
         await onboard.walletCheck();
-        // Update state with wallet info
-        console.log('PROVIDER');
-        console.log(provider);
         await this.$store.dispatch('main/setEthereumData', provider);
-        // Now we have a contract instance to use for sending transactions from
-        // the selected wallet
-        // this.ESRedemption = new ethers.Contract(addresses.ESRedemption, abi, signer);
       } catch (err) {
         console.error(err); // eslint-disable-line no-console
       } finally {
