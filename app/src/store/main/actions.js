@@ -60,23 +60,15 @@ export async function setEthereumData({ commit }, provider) {
   };
   commit('setContracts', contracts);
 
-  // Get regular contract instances with ethers to check user's proxy address
-  // const Factory = new ethers.Contract(addresses.factory, abi.factory, ethersProvider);
-  // const proxyAddress = await Factory.getContract(userAddress);
-
-  // If they have a proxy, get proxy data
   let ethBalance;
   let ethTokenBalance;
   let bntBalance;
   let ethBntBalance;
   let ticketNumber;
 
-  // if (proxyAddress !== ethers.constants.AddressZero) {
-  //   ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
-  //   bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
-  //   ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
-  //   ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
-  // }
+  if (userAddress) {
+    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(userAddress)));
+  }
 
   const proxyData = {
     address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
