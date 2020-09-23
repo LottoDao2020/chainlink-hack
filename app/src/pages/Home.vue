@@ -2,10 +2,10 @@
   <q-page padding>
     <div class="text-center">
       <h2 class="text-bold q-mt-lg">
-        Enter Liquidity Pools
+        Enter Lottery
       </h2>
       <h6 class="q-mt-md">
-        Deposit into Bancor liquidity pools with fiat
+        Play lottery on-chain with off-chain game info
       </h6>
     </div>
 
@@ -55,7 +55,6 @@
 <script>
 import { mapState } from 'vuex';
 import ConnectWallet from 'components/ConnectWallet';
-// import DeployProxy from 'components/DeployProxy';
 import DepositWithWyre from 'components/DepositWithWyre';
 import ExitPool from 'components/ExitPool';
 import UserAccountInfo from 'components/UserAccountInfo';
@@ -65,7 +64,6 @@ export default {
 
   components: {
     ConnectWallet,
-    // DeployProxy,
     DepositWithWyre,
     ExitPool,
     UserAccountInfo,
