@@ -45,7 +45,7 @@
       style="max-width: 450px"
     >
       <q-card-section>
-        <h6>Step 4 (After some time...)</h6>
+        <h6>Step 3 (After game finish)</h6>
         <h4 class="text-bold">
           Claim
         </h4>
