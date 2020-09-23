@@ -4,7 +4,7 @@
   "description": "A Chainlink example in a Truffle box",
   "scripts": {
     "compile": "npx truffle compile",
-    "console:dev": "npx truffle console --network cldev",
+    "console:dev": "npx truffle console --network rinkeby",
     "console:live": "npx truffle console --network live",
     "depcheck": "echo '@chainlink/box' && depcheck --ignore-dirs=build/contracts || true",
     "solhint": "npx solhint ./contracts/**/*.sol",

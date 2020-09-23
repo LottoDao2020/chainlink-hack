@@ -99,11 +99,18 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     // uint256 nextDraw;
   }
 
-  // Oracle Info
-  address oracleAddress = 0x2f90A6D021db21e1B2A077c5a37B3C7E75D15b7e;
-  bytes32 bytes32JobId = "50fc4215f89443d185b061e5d7af9490";
-  bytes32 uint256JobId = "29fa9aa13bf1468788b7cc4a500a45b8";
-  bytes32 boolJobId = "6d914edc36e14d6c880c9c55bda5bc04";
+  // Kovan Oracle Info
+  // address oracleAddress = 0x2f90A6D021db21e1B2A077c5a37B3C7E75D15b7e;
+  // bytes32 bytes32JobId = "50fc4215f89443d185b061e5d7af9490";
+  // bytes32 uint256JobId = "29fa9aa13bf1468788b7cc4a500a45b8";
+  // bytes32 boolJobId = "6d914edc36e14d6c880c9c55bda5bc04";
+
+  // Rinkeby Oracle Info
+  address oracleAddress = 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e;
+  bytes32 bytes32JobId = "b0bde308282843d49a3a8d2dd2464af1";
+  bytes32 uint256JobId = "6d1bfe27e7034b1d87b5270556b17277";
+  bytes32 boolJobId = "4ce9b71a1ac94abcad1ff9198e760b8c";
+
   uint256 oraclePayment = 0.1 * 10**18; // 0.1 LINK;
 
   mapping(bytes32 => Game) public games;
@@ -118,6 +125,15 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     game = stringToBytes32(_game);
     // Should get from requestNextDraw but the conversion is difficult
     games[game].duration = _duration;
+  }
+
+  /**
+   * @notice Returns the address of the LINK token
+   * @dev This is the public implementation for chainlinkTokenAddress, which is
+   * an internal method of the ChainlinkClient contract
+   */
+  function getChainlinkToken() public view returns (address) {
+    return chainlinkTokenAddress();
   }
 
   function requestAll(string calldata _apiKey, string calldata _game) external {
@@ -504,6 +520,7 @@ contract MagayoOracle is ChainlinkClient, Ownable {
     emit RequestSameBalls(requestId);
   }
 
+  // Todo: need to handle save N to false;
   function fulfillSameBalls(bytes32 _requestId, bool _sameBalls)
     external
     recordChainlinkFulfillment(_requestId)
