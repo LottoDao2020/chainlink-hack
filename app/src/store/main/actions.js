@@ -23,15 +23,6 @@ const abi = {
 const jsonFetch = (url) => fetch(url).then((res) => res.json());
 
 /**
- * @notice Returns ethers.js contract instance
- */
-const createContract = (address, name, provider) => {
-  // eslint-disable-next-line
-  const abi = require(`src/abi/${name}.json`);
-  return new ethers.Contract(address, abi, provider);
-};
-
-/**
  * @notice Gets gas cost to use transaction
  * @dev Defaults to fast to provide optimal UX
  * @param {string} speed Specify the speed to use, unspecified means use fastest. Options are
@@ -87,9 +78,6 @@ export async function setEthereumData({ commit }, provider) {
   let ethBntBalance;
   let ticketNumber;
 
-  const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
-  const EthBntContract = createContract(addresses.ETHBNT, 'ethbnt', ethersProvider);
   // if (proxyAddress !== ethers.constants.AddressZero) {
   //   ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
   //   bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
@@ -129,14 +117,8 @@ export async function checkBalances({ commit, state }, proxyAddress) {
   let bntBalance;
   let ethBntBalance;
 
-  const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
-  const EthBntContract = createContract(addresses.ETHBNT, 'ethbnt', ethersProvider);
   if (proxyAddress !== ethers.constants.AddressZero) {
     ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
-    bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
-    ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
-    ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
   }
 
   const proxyData = {
@@ -158,8 +140,6 @@ export async function setRewardBalance({ commit, state }, proxyAddress, rewardBa
   // let bntBalance;
   let ethBntBalance;
 
-  // const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  // const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
   if (proxyAddress !== ethers.constants.AddressZero) {
     ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
     // bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
