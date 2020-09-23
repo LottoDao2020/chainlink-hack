@@ -1,12 +1,11 @@
 {
-  "name": "bancor-fiat-on-ramp",
+  "name": "LottoDAO",
   "version": "0.1.0",
-  "description": "Fiat on/off ramps for entering/exiting Bancor liquidity pools",
-  "productName": "Bancor Fiat On Ramp",
+  "description": "Lottery on-chain game that based on off-chain Magayo API",
+  "productName": "LottoDAO",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
-  "author": "mds <17163988+mds1@users.noreply.github.com>",
-  "private": true,
+  "author": "LottoDAO",
   "scripts": {
     "dev": "source .env && npx quasar dev",
     "build": "git push && source .env && npx quasar build && npx firebase deploy",
