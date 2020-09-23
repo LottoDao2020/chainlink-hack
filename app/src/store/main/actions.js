@@ -6,16 +6,11 @@ const { utils } = ethers;
 const addresses = require('src/utils/addresses.json');
 const Web3 = require('web3'); // required for Open Zeppelin GSN provider
 const { GSNProvider } = require('@openzeppelin/gsn-provider');
-// const { proxies } = require('src/../../.openzeppelin/mainnet.json');
 
 const abi = {
-  // logic: require('src/../../build/contracts/ProvideLiquidity.json').abi,
-  // factory: require('src/../../build/contracts/ProvideLiquidityFactory.json').abi,
+  lottery: require('src/../../build/contracts/Lottery.json').abi,
+  magayoOracle: require('src/../../build/contracts/MagayoOracle.json').abi,
 };
-
-// addresses.logic = proxies['bancor-fiat-on-ramp/ProvideLiquidity'][0].address;
-// addresses.factory = proxies['bancor-fiat-on-ramp/ProvideLiquidityFactory'][0].address;
-
 
 /**
  * @notice Simple helper function fetch data from an API
@@ -59,13 +54,11 @@ export async function setEthereumData({ commit }, provider) {
   const userAddress = await signer.getAddress();
   commit('setWallet', { signer, provider, userAddress });
 
-  // Create GSN contract instances
-  const web3gsn = new Web3(new GSNProvider(provider));
-  // const contracts = {
-  //   Logic: new web3gsn.eth.Contract(abi.logic, addresses.logic),
-  //   Factory: new web3gsn.eth.Contract(abi.factory, addresses.factory),
-  // };
-  // commit('setContracts', contracts);
+  const contracts = {
+    Lottery: new ethers.Contract(addresses.lottery, abi.lottery, signer),
+    MagayoOracle: new ethers.Contract(addresses.magayoOracle, abi.magayoOracle, signer),
+  };
+  commit('setContracts', contracts);
 
   // Get regular contract instances with ethers to check user's proxy address
   // const Factory = new ethers.Contract(addresses.factory, abi.factory, ethersProvider);
