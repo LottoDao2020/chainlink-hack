@@ -74,6 +74,7 @@ contract Lottery is ChainlinkClient, Ownable {
   event LogNewLottery(uint32 drawNo, uint256 duration, uint256 startTime);
 
   constructor(uint256 _prizePerEntry, address _governance) public {
+    setPublicChainlinkToken();
     prizePerEntry = _prizePerEntry;
     iGovernance = IGovernance(_governance);
     iMagayoOracle = IMagayoOracle(iGovernance.magayoOracle());
