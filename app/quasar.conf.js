@@ -190,7 +190,7 @@ module.exports = function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'bancor-fiat-on-ramp',
+        appId: 'LottoDAO',
       },
 
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration

@@ -6,30 +6,16 @@ const { utils } = ethers;
 const addresses = require('src/utils/addresses.json');
 const Web3 = require('web3'); // required for Open Zeppelin GSN provider
 const { GSNProvider } = require('@openzeppelin/gsn-provider');
-// const { proxies } = require('src/../../.openzeppelin/mainnet.json');
 
 const abi = {
-  // logic: require('src/../../build/contracts/ProvideLiquidity.json').abi,
-  // factory: require('src/../../build/contracts/ProvideLiquidityFactory.json').abi,
+  lottery: require('src/../../build/contracts/Lottery.json').abi,
+  magayoOracle: require('src/../../build/contracts/MagayoOracle.json').abi,
 };
-
-// addresses.logic = proxies['bancor-fiat-on-ramp/ProvideLiquidity'][0].address;
-// addresses.factory = proxies['bancor-fiat-on-ramp/ProvideLiquidityFactory'][0].address;
-
 
 /**
  * @notice Simple helper function fetch data from an API
  */
 const jsonFetch = (url) => fetch(url).then((res) => res.json());
-
-/**
- * @notice Returns ethers.js contract instance
- */
-const createContract = (address, name, provider) => {
-  // eslint-disable-next-line
-  const abi = require(`src/abi/${name}.json`);
-  return new ethers.Contract(address, abi, provider);
-};
 
 /**
  * @notice Gets gas cost to use transaction
@@ -68,34 +54,21 @@ export async function setEthereumData({ commit }, provider) {
   const userAddress = await signer.getAddress();
   commit('setWallet', { signer, provider, userAddress });
 
-  // Create GSN contract instances
-  const web3gsn = new Web3(new GSNProvider(provider));
-  // const contracts = {
-  //   Logic: new web3gsn.eth.Contract(abi.logic, addresses.logic),
-  //   Factory: new web3gsn.eth.Contract(abi.factory, addresses.factory),
-  // };
-  // commit('setContracts', contracts);
+  const contracts = {
+    Lottery: new ethers.Contract(addresses.lottery, abi.lottery, signer),
+    MagayoOracle: new ethers.Contract(addresses.magayoOracle, abi.magayoOracle, signer),
+  };
+  commit('setContracts', contracts);
 
-  // Get regular contract instances with ethers to check user's proxy address
-  // const Factory = new ethers.Contract(addresses.factory, abi.factory, ethersProvider);
-  // const proxyAddress = await Factory.getContract(userAddress);
-
-  // If they have a proxy, get proxy data
   let ethBalance;
   let ethTokenBalance;
   let bntBalance;
   let ethBntBalance;
   let ticketNumber;
 
-  const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
-  const EthBntContract = createContract(addresses.ETHBNT, 'ethbnt', ethersProvider);
-  // if (proxyAddress !== ethers.constants.AddressZero) {
-  //   ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
-  //   bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
-  //   ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
-  //   ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
-  // }
+  if (userAddress) {
+    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(userAddress)));
+  }
 
   const proxyData = {
     address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
@@ -129,14 +102,8 @@ export async function checkBalances({ commit, state }, proxyAddress) {
   let bntBalance;
   let ethBntBalance;
 
-  const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
-  const EthBntContract = createContract(addresses.ETHBNT, 'ethbnt', ethersProvider);
   if (proxyAddress !== ethers.constants.AddressZero) {
     ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
-    bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));
-    ethTokenBalance = parseFloat(utils.formatEther(await EtherTokenContract.balanceOf(proxyAddress)));
-    ethBntBalance = parseFloat(utils.formatEther(await EthBntContract.balanceOf(proxyAddress)));
   }
 
   const proxyData = {
@@ -158,8 +125,6 @@ export async function setRewardBalance({ commit, state }, proxyAddress, rewardBa
   // let bntBalance;
   let ethBntBalance;
 
-  // const BntContract = createContract(addresses.BNT, 'bnt', ethersProvider);
-  // const EtherTokenContract = createContract(addresses.EtherToken, 'etherToken', ethersProvider);
   if (proxyAddress !== ethers.constants.AddressZero) {
     ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
     // bntBalance = parseFloat(utils.formatEther(await BntContract.balanceOf(proxyAddress)));

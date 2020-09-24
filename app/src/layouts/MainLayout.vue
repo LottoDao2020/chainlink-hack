@@ -13,13 +13,13 @@
             style="cursor: pointer;"
           >
             <img
-              alt="Dai logo"
+              alt="LottoDAO logo"
               class="q-mx-md"
               src="statics/icons/icon-256x256.png"
               style="max-width: 50px;"
             >
             <div class="text-h5 dark-toggle">
-              Bancor Liquidity Pool Ramps
+              LottoDAO
             </div>
           </div>
         </div>
@@ -57,28 +57,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <!-- FOOTER -->
-    <q-footer
-      bordered
-      class="q-mt-xl"
-      style="color: #000000; background-color: rgba(0,0,0,0)"
-    >
-      <div class="row justify-center text-center items-center dark-toggle q-my-xl">
-        <div
-          class="text-caption"
-          style="max-width: 800px;"
-        >
-          Built by
-          <a
-            href="https://twitter.com/msolomon44"
-            target="_blank"
-            class="hyperlink"
-          >Matt Solomon</a>
-          for Bancor's Fiat On-Ramp For Liqudity Pools challenge of
-          Gitcoin's Funding the Future Hackathon
-        </div>
-      </div>
-    </q-footer>
   </q-layout>
 </template>
 

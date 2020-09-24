@@ -4,48 +4,13 @@
       class="row justify-center"
       style="max-width: 900px"
     >
-      <!-- DEPOSIT -->
-      <q-card
-        class="col text-center q-px-lg q-py-md q-ma-md"
-        style="max-width: 400px"
-      >
-        <q-card-section>
-          <h6>Step 1</h6>
-          <h4 class="text-bold">
-            Deposit Funds
-          </h4>
-        </q-card-section>
-        <q-card-section>
-          <q-input
-            v-model.number="depositAmount"
-            class="input"
-            filled
-            label="Deposit Amount"
-            prefix="$"
-          />
-        </q-card-section>
-        <q-card-section>
-          <q-btn
-            color="primary"
-            label="Deposit Funds"
-            :loading="isDepositLoading"
-            :disabled="!Boolean(depositAmount) || depositAmount <= 0"
-            @click="startLuckyDraw"
-          />
-          <div class="text-caption text-italic q-mt-md">
-            You will be redirected to Wyre to complete your purchase. Afterwards, Wyre
-            will redirect you back here for you to complete Step 2.
-          </div>
-        </q-card-section>
-      </q-card>
-
       <!-- START THE DRAW -->
       <q-card
         class="col text-center q-px-lg q-py-md q-ma-md"
         style="max-width: 400px"
       >
         <q-card-section>
-          <h6>Step 2</h6>
+          <h6>Step 1</h6>
           <h4 class="text-bold">
             Start Your Lucky Draw
           </h4>
@@ -78,7 +43,7 @@
         style="max-width: 400px"
       >
         <q-card-section>
-          <h6>Step 3</h6>
+          <h6>Step 2</h6>
           <h4 class="text-bold">
             Check Result
           </h4>
@@ -182,7 +147,6 @@ export default {
         { label: 'ETH-BNT', value: 'eth-bnt' },
       ],
       // User options
-      depositAmount: undefined,
       ticketsAmount: undefined,
       selectedPool: null,
     };
