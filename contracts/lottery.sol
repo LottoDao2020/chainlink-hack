@@ -43,6 +43,8 @@ contract Lottery is ChainlinkClient, Ownable {
   mapping(address => mapping(uint32 => uint64[][])) public entries;
   uint32 public drawNo;
   uint256 public prizePerEntry;
+  uint256 public duration;
+  uint256 public startTime;
   enum LOTTERY_STATE {CLOSED, OPEN, GETTING_RANDOMNUMBER}
   //  mapping (address => mapping(uint16 => Reward[])) results;
 
@@ -69,6 +71,7 @@ contract Lottery is ChainlinkClient, Ownable {
 
   event LogBuy(address currentUser, uint256 eValue, uint32[] numbers);
   event LogClaim(address currentUser, uint32 drawNo, uint256 reward);
+  event LogNewLottery(uint32 drawNo, uint256 duration, uint256 startTime);
 
   constructor(uint256 _prizePerEntry, address _governance) public {
     prizePerEntry = _prizePerEntry;
@@ -78,6 +81,7 @@ contract Lottery is ChainlinkClient, Ownable {
     game = iMagayoOracle.game();
     mainDrawn = iMagayoOracle.games(game).mainDrawn;
     bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
+    drawNo = 1;
   }
 
   function setPrice(uint256 _prizePerEntry) external onlyOwner {
@@ -170,7 +174,7 @@ contract Lottery is ChainlinkClient, Ownable {
     }
   }
 
-  function startNewLottery() external onlyOwner {
+  function startNewLottery(uint256 _duration) external onlyOwner {
     require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
     draws[drawNo].state = LOTTERY_STATE.OPEN;
     Chainlink.Request memory req = buildChainlinkRequest(
@@ -178,9 +182,13 @@ contract Lottery is ChainlinkClient, Ownable {
       address(this),
       this.fulfillAlarm.selector
     );
-    uint256 duration = iMagayoOracle.duration();
+    // Using custom duration for easy testing
+    // uint256 duration = iMagayoOracle.duration();
+    duration = _duration;
+    startTime = now;
     req.addUint("until", now + duration);
     sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
+    emit LogNewLottery(drawNo, duration, startTime);
   }
 
   function fulfillAlarm(bytes32 _requestId)
