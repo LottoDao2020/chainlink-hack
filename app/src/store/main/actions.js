@@ -181,3 +181,12 @@ export function showTickets({ commit }, ticketsAmount) {
 
   commit('setProxyData', proxyData);
 }
+
+export async function buy({ commit, state }, numbers) {
+  // console.log('Lottery: ', state.contracts.Lottery);
+  // const drawNo = await state.contracts.Lottery.drawNo();
+  // console.log(drawNo);
+  // console.log(await state.contracts.Lottery.getResults(drawNo));
+  // console.log(await state.contracts.Lottery.entries(state.userAddress, drawNo, 0, 0));
+  await state.contracts.Lottery.buy(numbers, { value: ethers.utils.parseEther('0.01') });
+}
