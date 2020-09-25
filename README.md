@@ -97,3 +97,17 @@ Using network 'live'.
 Truffle v5.0.25 (core: 5.0.25)
 Node v10.16.3
 ```
+
+Project taglines:
+
+1. What's LottoDao?
+
+LottoDao is a decentralized lottery application based on the Ethereum blockchain and synchronized with Australian major lottery platforms.
+
+2. What's the difference between LottoDao and other lottery platforms?
+
+LottoDao uses blockchain and Chainlink, the pivotal data is base on smart contracts, which is safe and won't be intefered by any third party.
+
+3. What's the main advantage of LottoDao?
+
+With the advantage of utilizing blockchain, LottoDao is more independent, as well as autonomous; also it allows lottery participants to purchase lotto entries in a secure way and makes the lottery transparent.
