@@ -110,11 +110,11 @@ export default {
         console.log('MagayoOracle: ', this.MagayoOracle);
         const drawNo = await this.Lottery.drawNo();
         console.log(drawNo);
-        console.log(await this.Lottery.getEntries(drawNo));
-        console.log(await this.Lottery.getResults(drawNo));
-        console.log(await this.Lottery.getDrawState(drawNo));
-        console.log(await this.Lottery.getDrawRewards(drawNo));
-        console.log(await this.Lottery.getDrawNumbers(drawNo));
+        // console.log(await this.Lottery.getEntries(drawNo));
+        // console.log(await this.Lottery.getResults(drawNo));
+        // console.log(await this.Lottery.getDrawState(drawNo));
+        // console.log(await this.Lottery.getDrawRewards(drawNo));
+        // console.log(await this.Lottery.getDrawNumbers(drawNo));
 
         // const game = await this.MagayoOracle.game();
         // const gameInfo = await this.MagayoOracle.games(game);
@@ -122,27 +122,29 @@ export default {
         // console.log(ethers.utils.parseBytes32String(gameInfo.name));
         // console.log(gameInfo.mainDrawn);
 
-        // this.$store.dispatch('main/buy', [1, 2, 3, 4, 5, 6, 7, 8]);
-        this.$store.dispatch('main/claim', 1);
-
-        //   .on('transactionHash', async (txHash) => {
-        //       console.log('txHash: ', txHash);
-        //       notify.hash(txHash);
-        //       })
-        // .once('receipt', async (receipt) => {
-        //     console.log('Transaction receipt: ', receipt);
-        //     await this.$store.dispatch('main/checkBalances', this.proxyAddress);
-        //     this.isLoading = false;
-        //     this.isExitComplete = true;
-        //     })
-        // .then((data) => {
-        //     })
-        // .catch((err) => {
-        //     console.log('Something went wrong. See the error message below.');
-        //     console.error(err);
-        //     this.notifyUser('negative', err.message);
-        //     this.isLoading = false;
-        //     });
+        this.Lottery.claim(drawNo, { gasLimit: 500000 })
+          .on('transactionHash', async (txHash) => {
+            console.log('txHash: ', txHash);
+            notify.hash(txHash);
+          })
+          .once('receipt', async (receipt) => {
+            console.log('Transaction receipt: ', receipt);
+            // await this.$store.dispatch('main/checkResults', drawNo);
+            console.log(receipt);
+            const tx = await this.provider.getTransaction(receipt);
+            console.log(tx);
+            const code = await this.provider.call(tx, tx.blockNumber);
+            const reason = ethers.utils.toUtf8String(code);
+            console.log(reason);
+            this.isLoading = false;
+            this.isExitComplete = true;
+          })
+          .catch((err) => {
+            console.log('Something went wrong. See the error message below.');
+            console.error(err);
+            this.notifyUser('negative', err.message);
+            this.isLoading = false;
+          });
       } catch (err) {
         console.log('Something went wrong. See the error message below.');
         console.error(err);

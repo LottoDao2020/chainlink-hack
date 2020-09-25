@@ -37,3 +37,7 @@ export function setProxyAddress(state, address) {
 export function setGasPrice(state, gasPrice) {
   state.gasPrice = gasPrice;
 }
+
+export function setResults(state, results) {
+  state.results = results;
+}

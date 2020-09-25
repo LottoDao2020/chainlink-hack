@@ -94,27 +94,16 @@ export async function getProxy({ commit }, userAddress) {
   commit('setProxyAddress', userProxy);
 }
 
-export async function checkBalances({ commit, state }, proxyAddress) {
-  console.log('Checking for balance updates...'); // eslint-disable-line no-console
+export async function checkResults({ commit, state }, drawNo) {
+  console.log('Checking for updates...'); // eslint-disable-line no-console
   const ethersProvider = new ethers.providers.Web3Provider(state.provider);
-  let ethBalance;
-  let ethTokenBalance;
-  let bntBalance;
-  let ethBntBalance;
+  let results;
 
-  if (proxyAddress !== ethers.constants.AddressZero) {
-    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
+  if (drawNo && drawNo > 0) {
+    results = await this.Lottery.getResults(drawNo);
   }
 
-  const proxyData = {
-    address: proxyAddress,
-    ethBalance,
-    ethTokenBalance,
-    bntBalance,
-    ethBntBalance,
-  };
-
-  commit('setProxyData', proxyData);
+  commit('setResults', results);
 }
 
 export async function setRewardBalance({ commit, state }, proxyAddress, rewardBalance) {
@@ -180,12 +169,4 @@ export function showTickets({ commit }, ticketsAmount) {
   };
 
   commit('setProxyData', proxyData);
-}
-
-export async function buy({ commit, state }, numbers) {
-  await state.contracts.Lottery.buy(numbers, { value: ethers.utils.parseEther('0.01'), gasLimit: 500000 });
-}
-
-export async function claim({ commit, state }, drawNo) {
-  await state.contracts.Lottery.claim(drawNo, { gasLimit: 500000 });
 }
