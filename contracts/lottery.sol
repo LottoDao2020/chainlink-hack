@@ -97,7 +97,9 @@ contract Lottery is ChainlinkClient, Ownable {
   function getEntries(uint32 _drawNo) external view returns(uint64[] memory numbers){
     // Due to nested array limitation we only return the last entry
     uint256 length = entries[msg.sender][_drawNo].length;
-    numbers = entries[msg.sender][_drawNo][length - 1];
+    if(length > 0){
+      numbers = entries[msg.sender][_drawNo][length - 1];
+    }
   }
 
   function getDrawState(uint32 _drawNo) external view returns(LOTTERY_STATE){
@@ -135,25 +137,27 @@ contract Lottery is ChainlinkClient, Ownable {
   function getResults(uint32 _drawNo) public view returns (uint256[] memory results){
     uint256 tickets = entries[msg.sender][_drawNo].length;
     for (uint32 i = 0; i < tickets; i++){
-      uint32 mainWinning = 0;
-      for (uint32 j = 0; j < mainDrawn; j++){
-        for(uint32 k = 0; k < mainDrawn; k++){
-          if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
-            mainWinning++;
+      if(draws[_drawNo].numbers.length > 0){
+        uint32 mainWinning = 0;
+        for (uint32 j = 0; j < mainDrawn; j++){
+          for(uint32 k = 0; k < mainDrawn; k++){
+            if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
+              mainWinning++;
+            }
           }
         }
-      }
-      uint32 bonusWinning = 0;
-      for (uint32 j = 0; j < bonusDrawn; j++){
-        for(uint32 k = 0; k < bonusDrawn; k++){
-          if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
-            bonusWinning++;
+        uint32 bonusWinning = 0;
+        for (uint32 j = 0; j < bonusDrawn; j++){
+          for(uint32 k = 0; k < bonusDrawn; k++){
+            if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
+              bonusWinning++;
+            }
           }
         }
-      }
-      uint32 prizeDistribution = calculatePrize(mainWinning, bonusWinning);
-      if(prizeDistribution > 0){
-        results[i] = prizeDistribution * draws[_drawNo].rewards / 100;
+        uint32 prizeDistribution = calculatePrize(mainWinning, bonusWinning);
+        if(prizeDistribution > 0){
+          results[i] = prizeDistribution * draws[_drawNo].rewards / 100;
+        }
       }
     }
   }
