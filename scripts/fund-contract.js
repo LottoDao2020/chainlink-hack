@@ -15,16 +15,19 @@ const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '100000000000000000'
 
 module.exports = async callback => {
   try {
+    // fund magayoOracle
     let magayoOracle = await MagayoOracle.deployed()
     const tokenAddress = await magayoOracle.getChainlinkToken();
     const token = await LinkTokenInterface.at(tokenAddress)
     // console.log('Funding magayoOracle contract:', magayoOracle.address)
     // let tx = await token.transfer(magayoOracle.address, magayoOraclePayment)
 
+    // fund lottery
     let lottery = await Lottery.deployed()
     console.log('Funding lottery:', lottery.address)
     tx = await token.transfer(lottery.address, payment)
 
+    // fund randomNumber
     let randomNumber = await RandomNumber.deployed()
     console.log('Funding randomNumber:', randomNumber.address)
     tx = await token.transfer(randomNumber.address, payment)

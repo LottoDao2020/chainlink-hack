@@ -188,5 +188,7 @@ export async function buy({ commit, state }, numbers) {
   // console.log(drawNo);
   // console.log(await state.contracts.Lottery.getResults(drawNo));
   // console.log(await state.contracts.Lottery.entries(state.userAddress, drawNo, 0, 0));
-  await state.contracts.Lottery.buy(numbers, { value: ethers.utils.parseEther('0.01') });
+  console.log(numbers);
+  await state.contracts.Lottery.buy(numbers, { value: ethers.utils.parseEther('0.01'), gasLimit: 500000 });
+  // let tx = await lottery.buy([1,3,6,34,32,23,14,17], {value: web3.utils.toWei('0.01', 'ether')})
 }

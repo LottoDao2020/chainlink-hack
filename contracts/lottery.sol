@@ -1,5 +1,6 @@
-pragma solidity 0.6.12;
+// SPDX-License-Identifier: UNLICENSED
 pragma experimental ABIEncoderV2;
+pragma solidity 0.6.12;
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -91,6 +92,24 @@ contract Lottery is ChainlinkClient, Ownable {
 
   function setGovernance(address _governance) external onlyOwner {
     iGovernance = IGovernance(_governance);
+  }
+
+  function getEntries(uint32 _drawNo) external view returns(uint64[] memory numbers){
+    // Due to nested array limitation we only return the last entry
+    uint256 length = entries[msg.sender][_drawNo].length;
+    numbers = entries[msg.sender][_drawNo][length - 1];
+  }
+
+  function getDrawState(uint32 _drawNo) external view returns(LOTTERY_STATE){
+    return draws[_drawNo].state;
+  }
+
+  function getDrawRewards(uint32 _drawNo) external view returns(uint256){
+    return draws[_drawNo].rewards;
+  }
+
+  function getDrawNumbers(uint32 _drawNo) external view returns(uint32[] memory){
+    return draws[_drawNo].numbers;
   }
 
   function buy(uint32[] calldata numbers) external payable {
