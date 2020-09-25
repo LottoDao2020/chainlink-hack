@@ -50,20 +50,19 @@
             Start Your Lucky Draw
           </h4>
         </q-card-section>
-        <q-card-section>
+        <!-- <q-card-section>
           <q-input
             v-model.number="ticketsAmount"
             class="input"
             filled
             label="How many Tickets"
           />
-        </q-card-section>
+        </q-card-section> -->
         <q-card-section>
           <q-btn
             color="primary"
             label="Buy"
             :loading="isDepositLoading"
-            :disabled="!Boolean(ticketsAmount) || ticketsAmount <= 0"
             @click="startLuckyDraw"
           />
           <div class="text-caption text-italic q-mt-md">
@@ -223,10 +222,10 @@ export default {
   },
 
   methods: {
-    startLuckyDraw() {
-      this.isDepositLoading = true;
+    async startLuckyDraw() {
+      // this.isDepositLoading = true;
 
-      this.$store.dispatch('main/showTickets', this.ticketsAmount);
+      await this.$store.dispatch('main/showTickets', this.ticketsAmount);
 
       // try {
       //   // Check if we are in dev or prod
