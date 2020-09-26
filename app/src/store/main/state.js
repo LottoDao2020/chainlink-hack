@@ -8,6 +8,9 @@ export default function () {
       ethBntBalance: undefined,
       ethTokenBalance: undefined,
       ticketNumber: undefined,
+      magayoInfo: undefined,
+      entries: undefined,
+      results: undefined,
     },
     provider: {}, // raw provider for GSN
     signer: {}, // ethers.js signer

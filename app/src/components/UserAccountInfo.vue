@@ -26,6 +26,12 @@
           </div>
           <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
+              Magayo Information:
+            </div>
+            <div class="col text-left">
+              {{ magayoInfo }}
+            </div>
+            <div class="col-xs-5 text-left text-bold">
               Ticket Number:
             </div>
             <div class="col text-left">
@@ -59,7 +65,6 @@ export default {
       ticketNumber: (state) => state.main.proxy.ticketNumber,
     }),
   },
-
 };
 </script>
 
