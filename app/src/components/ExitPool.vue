@@ -85,18 +85,10 @@ export default {
   },
 
   methods: {
-    setRecipientAddressToProxy() {
-      this.recipientAddress = this.proxyAddress;
-    },
-
     async exitPool({ commit }) {
       /* eslint-disable no-console */
       this.isLoading = true;
       console.log('Initializing pool exit...');
-
-      // const EthBntContract = new ethers.Contract(addresses.ETHBNT, ethBntAbi, ethersProvider);
-
-      // const ethBntBalance = (await EthBntContract.balanceOf(this.proxyAddress)).toString();
 
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
@@ -122,7 +114,8 @@ export default {
         // console.log(ethers.utils.parseBytes32String(gameInfo.name));
         // console.log(gameInfo.mainDrawn);
 
-        this.Lottery.claim(drawNo, { gasLimit: 500000 })
+        this.Lottery.functions.claim(drawNo)
+          .send({ from: this.userAddress, gasLimit: 500000 })
           .on('transactionHash', async (txHash) => {
             console.log('txHash: ', txHash);
             notify.hash(txHash);
@@ -130,14 +123,13 @@ export default {
           .once('receipt', async (receipt) => {
             console.log('Transaction receipt: ', receipt);
             // await this.$store.dispatch('main/checkResults', drawNo);
-            console.log(receipt);
-            const tx = await this.provider.getTransaction(receipt);
-            console.log(tx);
-            const code = await this.provider.call(tx, tx.blockNumber);
-            const reason = ethers.utils.toUtf8String(code);
-            console.log(reason);
+            // const tx = await this.provider.getTransaction(receipt);
+            // console.log(tx);
+            // const code = await this.provider.call(tx, tx.blockNumber);
+            // const reason = ethers.utils.toUtf8String(code);
+            // console.log(reason);
             this.isLoading = false;
-            this.isExitComplete = true;
+            // this.isExitComplete = true;
           })
           .catch((err) => {
             console.log('Something went wrong. See the error message below.');

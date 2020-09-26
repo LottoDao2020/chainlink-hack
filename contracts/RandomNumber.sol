@@ -15,8 +15,8 @@ interface IGovernance {
 contract RandomNumber is VRFConsumerBase, Ownable {
   bytes32 internal keyHash;
   uint256 internal fee;
-  address governance;
-  IGovernance iGovernance = IGovernance(governance);
+  address public governance;
+  IGovernance iGovernance;
 
   /**
    * Constructor inherits VRFConsumerBase
@@ -39,10 +39,12 @@ contract RandomNumber is VRFConsumerBase, Ownable {
     keyHash = 0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311; // Rinkeby keyHash
     fee = 0.1 * 10**18; // 0.1 LINK
     governance = _governance;
+    iGovernance = IGovernance(_governance);
   }
 
   function setGovernance(address _governance) external onlyOwner {
     governance = _governance;
+    iGovernance = IGovernance(_governance);
   }
 
   /**
