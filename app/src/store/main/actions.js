@@ -46,7 +46,6 @@ async function getGasPrice(speed = 'fast') {
   return web3gasPrice;
 }
 
-
 export async function setEthereumData({ commit }, provider) {
   // Get wallet info
   const ethersProvider = new ethers.providers.Web3Provider(provider);
@@ -164,11 +163,9 @@ function createGround(mainmin, mainmax, specialmin, specialmax) {
 }
 
 export async function setMagayoInfo({ commit }, info) {
-  const proxyData = {
-    magayoInfo: info,
-  };
-
-  commit('setProxyData', proxyData);
+  console.log('INFO');
+  console.log(info);
+  commit('setMagayoInfo', info);
 }
 
 export async function showTickets({ commit }, ticketsAmount) {

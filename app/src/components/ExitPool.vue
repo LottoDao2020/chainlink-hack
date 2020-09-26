@@ -101,7 +101,6 @@ export default {
         darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
       });
 
-
       try {
         console.log('Lottery: ', this.Lottery);
         console.log('MagayoOracle: ', this.MagayoOracle);
