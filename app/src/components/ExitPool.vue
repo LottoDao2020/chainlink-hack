@@ -116,11 +116,13 @@ export default {
         // console.log(await this.Lottery.getDrawRewards(drawNo));
         // console.log(await this.Lottery.getDrawNumbers(drawNo));
 
-        // const game = await this.MagayoOracle.game();
-        // const gameInfo = await this.MagayoOracle.games(game);
-        // console.log(gameInfo);
-        // console.log(ethers.utils.parseBytes32String(gameInfo.name));
-        // console.log(gameInfo.mainDrawn);
+        const game = await this.MagayoOracle.game();
+        const gameInfo = await this.MagayoOracle.games(game);
+        console.log(gameInfo);
+        console.log(gameInfo.name);
+
+        console.log(ethers.utils.parseBytes32String(gameInfo.name));
+        console.log(gameInfo.mainDrawn);
 
         this.Lottery.claim(drawNo, { gasLimit: 500000 })
           .on('transactionHash', async (txHash) => {

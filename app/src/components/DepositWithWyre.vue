@@ -127,6 +127,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { ethers } from 'ethers';
 import mixinHelpers from 'src/utils/mixinHelpers';
 import Notify from 'bnc-notify';
 
@@ -166,6 +167,8 @@ export default {
       // Helpers
       gasPrice: (state) => state.main.gasPrice,
       FactoryContract: (state) => state.main.contracts.Factory,
+      Lottery: (state) => state.main.contracts.Lottery,
+      MagayoOracle: (state) => state.main.contracts.MagayoOracle,
     }),
   },
 
@@ -188,8 +191,22 @@ export default {
   methods: {
     async startLuckyDraw() {
       // this.isDepositLoading = true;
-
+      await this.$store.dispatch('main/getMagayoInfo');
       await this.$store.dispatch('main/showTickets', this.ticketsAmount);
+
+      console.log('MagayoOracle: ', this.MagayoOracle);
+      const game = await this.MagayoOracle.game();
+      const gameInfo = await this.MagayoOracle.games(game);
+      console.log(gameInfo);
+      console.log(gameInfo.name);
+      
+      console.log(ethers.utils.parseBytes32String(gameInfo.name));
+      console.log(gameInfo.mainDrawn);
+      const magayoInfo = {
+        'Game Name': gameInfo.name,
+        'Main Drawn': gameInfo.mainDrawn,
+      };
+      await this.$store.dispatch('main/setMagayoInfo', magayoInfo);
 
       // try {
       //   // Check if we are in dev or prod

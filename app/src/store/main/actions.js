@@ -58,6 +58,8 @@ export async function setEthereumData({ commit }, provider) {
     Lottery: new ethers.Contract(addresses.lottery, abi.lottery, signer),
     MagayoOracle: new ethers.Contract(addresses.magayoOracle, abi.magayoOracle, signer),
   };
+  console.log('CONTRACTS');
+  console.log(contracts);
   commit('setContracts', contracts);
 
   let ethBalance;
@@ -157,9 +159,18 @@ function createGround(mainmin, mainmax, specialmin, specialmax) {
   return result;
 }
 
+export async function setMagayoInfo({ commit }, info) {
+  const proxyData = {
+    magayoInfo: info,
+  };
+
+  commit('setProxyData', proxyData);
+}
+
 export async function showTickets({ commit }, ticketsAmount) {
   let arr = [];
   arr = createGround(ticketsAmount, 1, 35, 1, 20);
+  // magayoArr = getMagayoInfo(state);
   // if (proxyAddress !== ethers.constants.AddressZero) {
 
   // }

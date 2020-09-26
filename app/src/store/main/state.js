@@ -8,6 +8,7 @@ export default function () {
       ethBntBalance: undefined,
       ethTokenBalance: undefined,
       ticketNumber: undefined,
+      magayoInfo: undefined,
       entries: undefined,
       results: undefined,
     },
