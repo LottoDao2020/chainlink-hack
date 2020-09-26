@@ -54,9 +54,13 @@ export async function setEthereumData({ commit }, provider) {
   const userAddress = await signer.getAddress();
   commit('setWallet', { signer, provider, userAddress });
 
+  const web3 = new Web3(provider);
+
   const contracts = {
     Lottery: new ethers.Contract(addresses.lottery, abi.lottery, signer),
     MagayoOracle: new ethers.Contract(addresses.magayoOracle, abi.magayoOracle, signer),
+    LotteryWeb3: new web3.eth.Contract(abi.lottery, addresses.lottery),
+    MagayoOracleWeb3: new web3.eth.Contract(abi.magayoOracle, addresses.magayoOracle),
   };
   console.log('CONTRACTS');
   console.log(contracts);

@@ -81,6 +81,7 @@ export default {
       // Helpers
       Lottery: (state) => state.main.contracts.Lottery,
       MagayoOracle: (state) => state.main.contracts.MagayoOracle,
+      LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
     }),
   },
 
@@ -94,10 +95,6 @@ export default {
       this.isLoading = true;
       console.log('Initializing pool exit...');
 
-      // const EthBntContract = new ethers.Contract(addresses.ETHBNT, ethBntAbi, ethersProvider);
-
-      // const ethBntBalance = (await EthBntContract.balanceOf(this.proxyAddress)).toString();
-
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
         networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
@@ -108,13 +105,14 @@ export default {
       try {
         console.log('Lottery: ', this.Lottery);
         console.log('MagayoOracle: ', this.MagayoOracle);
-        const drawNo = await this.Lottery.drawNo();
+        // const drawNo = await this.Lottery.drawNo();
+        const drawNo = 1;
         console.log(drawNo);
-        // console.log(await this.Lottery.getEntries(drawNo));
-        // console.log(await this.Lottery.getResults(drawNo));
-        // console.log(await this.Lottery.getDrawState(drawNo));
-        // console.log(await this.Lottery.getDrawRewards(drawNo));
-        // console.log(await this.Lottery.getDrawNumbers(drawNo));
+        console.log('getEntries: ', await this.Lottery.getEntries(drawNo));
+        console.log('getResults: ', await this.Lottery.getResults(drawNo));
+        console.log('getDrawState: ', await this.Lottery.getDrawState(drawNo));
+        console.log('getDrawRewards: ', await this.Lottery.getDrawRewards(drawNo));
+        console.log('getDrawNumbers: ', await this.Lottery.getDrawNumbers(drawNo));
 
         const game = await this.MagayoOracle.game();
         const gameInfo = await this.MagayoOracle.games(game);
@@ -124,7 +122,8 @@ export default {
         console.log(ethers.utils.parseBytes32String(gameInfo.name));
         console.log(gameInfo.mainDrawn);
 
-        this.Lottery.claim(drawNo, { gasLimit: 500000 })
+        this.LotteryWeb3.methods.claim(drawNo)
+          .send({ from: this.userAddress, gasLimit: 500000 })
           .on('transactionHash', async (txHash) => {
             console.log('txHash: ', txHash);
             notify.hash(txHash);
@@ -132,14 +131,13 @@ export default {
           .once('receipt', async (receipt) => {
             console.log('Transaction receipt: ', receipt);
             // await this.$store.dispatch('main/checkResults', drawNo);
-            console.log(receipt);
-            const tx = await this.provider.getTransaction(receipt);
-            console.log(tx);
-            const code = await this.provider.call(tx, tx.blockNumber);
-            const reason = ethers.utils.toUtf8String(code);
-            console.log(reason);
+            // const tx = await this.provider.getTransaction(receipt);
+            // console.log(tx);
+            // const code = await this.provider.call(tx, tx.blockNumber);
+            // const reason = ethers.utils.toUtf8String(code);
+            // console.log(reason);
             this.isLoading = false;
-            this.isExitComplete = true;
+            // this.isExitComplete = true;
           })
           .catch((err) => {
             console.log('Something went wrong. See the error message below.');
