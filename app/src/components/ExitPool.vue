@@ -81,10 +81,15 @@ export default {
       // Helpers
       Lottery: (state) => state.main.contracts.Lottery,
       MagayoOracle: (state) => state.main.contracts.MagayoOracle,
+      LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
     }),
   },
 
   methods: {
+    setRecipientAddressToProxy() {
+      this.recipientAddress = this.proxyAddress;
+    },
+
     async exitPool({ commit }) {
       /* eslint-disable no-console */
       this.isLoading = true;
@@ -100,13 +105,14 @@ export default {
       try {
         console.log('Lottery: ', this.Lottery);
         console.log('MagayoOracle: ', this.MagayoOracle);
-        const drawNo = await this.Lottery.drawNo();
+        // const drawNo = await this.Lottery.drawNo();
+        const drawNo = 1;
         console.log(drawNo);
-        // console.log(await this.Lottery.getEntries(drawNo));
-        // console.log(await this.Lottery.getResults(drawNo));
-        // console.log(await this.Lottery.getDrawState(drawNo));
-        // console.log(await this.Lottery.getDrawRewards(drawNo));
-        // console.log(await this.Lottery.getDrawNumbers(drawNo));
+        console.log('getEntries: ', await this.Lottery.getEntries(drawNo));
+        console.log('getResults: ', await this.Lottery.getResults(drawNo));
+        console.log('getDrawState: ', await this.Lottery.getDrawState(drawNo));
+        console.log('getDrawRewards: ', await this.Lottery.getDrawRewards(drawNo));
+        console.log('getDrawNumbers: ', await this.Lottery.getDrawNumbers(drawNo));
 
         // const game = await this.MagayoOracle.game();
         // const gameInfo = await this.MagayoOracle.games(game);
@@ -114,7 +120,7 @@ export default {
         // console.log(ethers.utils.parseBytes32String(gameInfo.name));
         // console.log(gameInfo.mainDrawn);
 
-        this.Lottery.functions.claim(drawNo)
+        this.LotteryWeb3.methods.claim(drawNo)
           .send({ from: this.userAddress, gasLimit: 500000 })
           .on('transactionHash', async (txHash) => {
             console.log('txHash: ', txHash);
