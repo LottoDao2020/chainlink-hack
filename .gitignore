@@ -1,0 +1,10 @@
+# NPM
+node_modules/
+
+# VIM
+*.swp
+
+# .env
+.env
+
+.DS_Store
