@@ -31,6 +31,8 @@
             <div class="col text-left">
               {{ magayoInfo }}
             </div>
+          </div>
+          <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
               Ticket Number:
             </div>
@@ -63,6 +65,7 @@ export default {
       ethBalance: (state) => state.main.proxy.ethBalance,
       ethBntBalance: (state) => state.main.proxy.ethBntBalance,
       ticketNumber: (state) => state.main.proxy.ticketNumber,
+      magayoInfo: (state) => state.main.proxy.magayoInfo,
     }),
   },
 };

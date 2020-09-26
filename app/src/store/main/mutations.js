@@ -41,3 +41,7 @@ export function setGasPrice(state, gasPrice) {
 export function setResults(state, results) {
   state.results = results;
 }
+
+export function setMagayoInfo(state, info) {
+  state.proxy.magayoInfo = info;
+}
