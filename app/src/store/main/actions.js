@@ -132,31 +132,36 @@ export async function setRewardBalance({ commit, state }, proxyAddress, rewardBa
   commit('setProxyData', proxyData);
 }
 
-function createGround(width, height) {
+function createGround(mainmin, mainmax, specialmin, specialmax) {
   const result = [];
-  let i;
-  let j;
-  for (i = 0; i < width; i += 1) {
-    result[i] = [];
-    for (j = 0; j < height; j += 1) {
-      result[i][j] = Math.floor(Math.random() * 100) + 1;
+  let r;
+  const s = Math.floor(Math.random() * 20) + 1;
+  // let i;
+  // let j;
+  // for (i = 0; i < width; i += 1) {
+  //   result[i] = [];
+  //   for (j = 0; j < height; j += 1) {
+  //     result[i][j] = Math.floor(Math.random() * 35) + 1;
+  //   }
+  // }
+
+  while (result.length < 7) {
+    r = Math.floor(Math.random() * 35) + 1;
+    if (result.indexOf(r) === -1) {
+      console.log(r);
+      result.push(r);
     }
   }
+
+  result.push(s);
   return result;
 }
 
-export function showTickets({ commit }, ticketsAmount) {
+export async function showTickets({ commit }, ticketsAmount) {
   let arr = [];
-  let r;
-  arr = createGround(ticketsAmount, 7);
+  arr = createGround(ticketsAmount, 1, 35, 1, 20);
   // if (proxyAddress !== ethers.constants.AddressZero) {
-  // while (arr.length < ticketsAmount) {
-  //   r = Math.floor(Math.random() * 100) + 1;
-  //   if (arr.indexOf(r) === -1) {
-  //     console.log(r);
-  //     arr.push(r);
-  //   }
-  // }
+
   // }
   console.log(arr);
   const proxyData = {
