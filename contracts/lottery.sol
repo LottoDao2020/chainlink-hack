@@ -1,5 +1,6 @@
-pragma solidity 0.6.12;
+// SPDX-License-Identifier: UNLICENSED
 pragma experimental ABIEncoderV2;
+pragma solidity 0.6.12;
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -43,6 +44,8 @@ contract Lottery is ChainlinkClient, Ownable {
   mapping(address => mapping(uint32 => uint64[][])) public entries;
   uint32 public drawNo;
   uint256 public prizePerEntry;
+  uint256 public duration;
+  uint256 public startTime;
   enum LOTTERY_STATE {CLOSED, OPEN, GETTING_RANDOMNUMBER}
   //  mapping (address => mapping(uint16 => Reward[])) results;
 
@@ -56,7 +59,11 @@ contract Lottery is ChainlinkClient, Ownable {
   IMagayoOracle iMagayoOracle;
   IRandomNumber iRandomNumber;
   bytes32 game;
+  uint256 mainMin;
+  uint256 mainMax;
   uint256 mainDrawn;
+  uint256 bonusMin;
+  uint256 bonusMax;
   uint256 bonusDrawn;
 
   struct Draw {
@@ -69,15 +76,22 @@ contract Lottery is ChainlinkClient, Ownable {
 
   event LogBuy(address currentUser, uint256 eValue, uint32[] numbers);
   event LogClaim(address currentUser, uint32 drawNo, uint256 reward);
+  event LogNewLottery(uint32 drawNo, uint256 duration, uint256 startTime);
 
   constructor(uint256 _prizePerEntry, address _governance) public {
+    setPublicChainlinkToken();
     prizePerEntry = _prizePerEntry;
     iGovernance = IGovernance(_governance);
     iMagayoOracle = IMagayoOracle(iGovernance.magayoOracle());
     iRandomNumber = IRandomNumber(iGovernance.randomNumber());
     game = iMagayoOracle.game();
+    mainMin = iMagayoOracle.games(game).mainMin;
+    mainMax = iMagayoOracle.games(game).mainMax;
     mainDrawn = iMagayoOracle.games(game).mainDrawn;
+    bonusMin = iMagayoOracle.games(game).bonusMin;
+    bonusMax = iMagayoOracle.games(game).bonusMax;
     bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
+    drawNo = 1;
   }
 
   function setPrice(uint256 _prizePerEntry) external onlyOwner {
@@ -86,6 +100,26 @@ contract Lottery is ChainlinkClient, Ownable {
 
   function setGovernance(address _governance) external onlyOwner {
     iGovernance = IGovernance(_governance);
+  }
+
+  function getEntries(uint32 _drawNo) external view returns(uint64[] memory numbers){
+    // Due to nested array limitation we only return the last entry
+    uint256 length = entries[msg.sender][_drawNo].length;
+    if(length > 0){
+      numbers = entries[msg.sender][_drawNo][length - 1];
+    }
+  }
+
+  function getDrawState(uint32 _drawNo) external view returns(LOTTERY_STATE){
+    return draws[_drawNo].state;
+  }
+
+  function getDrawRewards(uint32 _drawNo) external view returns(uint256){
+    return draws[_drawNo].rewards;
+  }
+
+  function getDrawNumbers(uint32 _drawNo) external view returns(uint32[] memory){
+    return draws[_drawNo].numbers;
   }
 
   function buy(uint32[] calldata numbers) external payable {
@@ -111,25 +145,27 @@ contract Lottery is ChainlinkClient, Ownable {
   function getResults(uint32 _drawNo) public view returns (uint256[] memory results){
     uint256 tickets = entries[msg.sender][_drawNo].length;
     for (uint32 i = 0; i < tickets; i++){
-      uint32 mainWinning = 0;
-      for (uint32 j = 0; j < mainDrawn; j++){
-        for(uint32 k = 0; k < mainDrawn; k++){
-          if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
-            mainWinning++;
+      if(draws[_drawNo].numbers.length > 0){
+        uint32 mainWinning = 0;
+        for (uint32 j = 0; j < mainDrawn; j++){
+          for(uint32 k = 0; k < mainDrawn; k++){
+            if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
+              mainWinning++;
+            }
           }
         }
-      }
-      uint32 bonusWinning = 0;
-      for (uint32 j = 0; j < bonusDrawn; j++){
-        for(uint32 k = 0; k < bonusDrawn; k++){
-          if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
-            bonusWinning++;
+        uint32 bonusWinning = 0;
+        for (uint32 j = 0; j < bonusDrawn; j++){
+          for(uint32 k = 0; k < bonusDrawn; k++){
+            if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
+              bonusWinning++;
+            }
           }
         }
-      }
-      uint32 prizeDistribution = calculatePrize(mainWinning, bonusWinning);
-      if(prizeDistribution > 0){
-        results[i] = prizeDistribution * draws[_drawNo].rewards / 100;
+        uint32 prizeDistribution = calculatePrize(mainWinning, bonusWinning);
+        if(prizeDistribution > 0){
+          results[i] = prizeDistribution * draws[_drawNo].rewards / 100;
+        }
       }
     }
   }
@@ -170,7 +206,7 @@ contract Lottery is ChainlinkClient, Ownable {
     }
   }
 
-  function startNewLottery() external onlyOwner {
+  function startNewLottery(uint256 _duration) external onlyOwner {
     require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
     draws[drawNo].state = LOTTERY_STATE.OPEN;
     Chainlink.Request memory req = buildChainlinkRequest(
@@ -178,9 +214,13 @@ contract Lottery is ChainlinkClient, Ownable {
       address(this),
       this.fulfillAlarm.selector
     );
-    uint256 duration = iMagayoOracle.duration();
+    // Using custom duration for easy testing
+    // uint256 duration = iMagayoOracle.duration();
+    duration = _duration;
+    startTime = now;
     req.addUint("until", now + duration);
     sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
+    emit LogNewLottery(drawNo, duration, startTime);
   }
 
   function fulfillAlarm(bytes32 _requestId)
@@ -204,11 +244,11 @@ contract Lottery is ChainlinkClient, Ownable {
     draws[drawNo].state = LOTTERY_STATE.CLOSED;
     draws[drawNo].rewards = address(this).balance;
     for (uint32 i = 0; i < mainDrawn; i++) {
-      draws[drawNo].numbers.push(uint32(_number % 100));
+      draws[drawNo].numbers.push(uint32(_number % (mainMax - mainMin + 1)));
       _number = _number / 100;
     }
     for (uint32 i = 0; i < bonusDrawn; i++) {
-      draws[drawNo].numbers.push(uint32(_number % 100));
+      draws[drawNo].numbers.push(uint32(_number % (bonusMax - bonusMin + 1)));
       _number = _number / 100;
     }
     drawNo++;

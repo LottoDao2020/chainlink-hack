@@ -1,92 +1,49 @@
 <template>
   <div>
-    <!-- POOL EXITED -->
-    <q-dialog
-      v-model="isExitComplete"
-      persistent
-    >
-      <q-card class="text-center q-pa-lg">
-        <q-card-section>
-          <h4 class="row justify-center items-center">
-            <span>You Exited the Pool!</span>
-          </h4>
-        </q-card-section>
-
-        <q-card-section>
-          <div>
-            You have successfully exited the pool!
-          </div>
-          <p class="q-mt-lg">
-            <img
-              src="statics/graphics/undraw_confirmation_2uy0.png"
-              style="width:30vw;max-width:225px;"
-            >
-          </p>
-          <div>
-            Your funds are sitting in your proxy contrat, and you may
-            now transfer them as desired.
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            v-close-popup
-            flat
-            label="Ok"
-            :color="$q.dark.isActive ? 'white' : 'primary'"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
     <!-- EXIT FORM -->
     <q-card
+      v-if="drawNo"
       class="col text-center q-px-lg q-py-md q-ma-md"
       style="max-width: 450px"
+      :loading="isMainLoading"
     >
       <q-card-section>
-        <h6>Step 3 (After game finish)</h6>
+        <h6>Step 2 </h6>
         <h4 class="text-bold">
-          Claim
+          Check & Claim
         </h4>
       </q-card-section>
 
       <q-card-section>
         <div class="text-caption text-justify">
-          Redeem all pool tokens as ETH to the specified the address. If you'd like to keep them
-          in your proxy contract (i.e. if you want to enter into a different pool),
-          use the "Keep in Proxy" button.
+          Select a draw number to claim reward
         </div>
       </q-card-section>
 
       <q-card-section>
-        <q-input
-          v-model="recipientAddress"
+        <q-select
+          v-model="selectedDrawNo"
           class="q-mb-md"
           filled
-          label="Address to withdraw to"
-        >
-          <template v-slot:append>
-            <q-btn
-              :color="$q.dark.isActive ? 'white' : 'primary'"
-              flat
-              label="Keep in proxy"
-              @click="setRecipientAddressToProxy"
-            />
-          </template>
-        </q-input>
-        <q-btn
-          color="primary"
-          label="Claim"
-          :loading="isLoading"
-          :disabled="ethBntBalance === 0"
-          @click="exitPool"
-        />
-        <div
-          v-if="ethBntBalance === 0"
-          class="text-caption text-italic text-center q-mt-md"
-        >
-          You have no pool tokens to withdraw
+          label="draw number to claim with"
+          :options="options">
+        </q-select>
+        <div class="row">
+          <q-btn
+            color="primary"
+            class="col-3"
+            label="Check"
+            :loading="isMainLoading"
+            @click="check"
+          />
+          <div class="col-6"></div>
+          <q-btn
+            class="col-3"
+            color="primary"
+            label="Claim"
+            :loading="isMainLoading"
+            @click="claim"
+          />
         </div>
       </q-card-section>
     </q-card>
@@ -99,10 +56,6 @@ import { ethers } from 'ethers';
 import mixinHelpers from 'src/utils/mixinHelpers';
 import Notify from 'bnc-notify';
 
-const addresses = require('src/utils/addresses.json');
-
-const ethBntAbi = require('src/abi/ethbnt.json');
-
 export default {
   name: 'ExitPool',
 
@@ -110,9 +63,9 @@ export default {
 
   data() {
     return {
-      isLoading: false,
-      isExitComplete: false,
+      isMainLoading: false,
       recipientAddress: undefined,
+      selectedDrawNo: undefined,
     };
   },
 
@@ -124,7 +77,12 @@ export default {
       proxyAddress: (state) => state.main.proxy.address,
       ethBntBalance: (state) => state.main.proxy.ethBntBalance,
       // Helpers
-      FactoryContract: (state) => state.main.contracts.Factory,
+      Lottery: (state) => state.main.contracts.Lottery,
+      MagayoOracle: (state) => state.main.contracts.MagayoOracle,
+      LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
+      // Lottery
+      options: (state) => state.main.lottery.options,
+      drawNo: (state) => state.main.lottery.drawNo,
     }),
   },
 
@@ -133,58 +91,48 @@ export default {
       this.recipientAddress = this.proxyAddress;
     },
 
-    async exitPool({ commit }) {
+    async check() {
+      this.isMainLoading = true;
+      await this.$store.dispatch('main/setDrawNo', this.selectedDrawNo);
+      await this.$store.dispatch('main/setLotteryData');
+      this.isMainLoading = false;
+    },
+
+    async claim({ commit }) {
       /* eslint-disable no-console */
-      this.isLoading = true;
-      console.log('Initializing pool exit...');
-
-      // Get ETHBNT balance
-      const ethersProvider = new ethers.providers.Web3Provider(this.provider);
-      const EthBntContract = new ethers.Contract(addresses.ETHBNT, ethBntAbi, ethersProvider);
-
-      const ethBntBalance = (await EthBntContract.balanceOf(this.proxyAddress)).toString();
+      this.isMainLoading = true;
+      console.log('selectedDrawNo: ', this.selectedDrawNo);
 
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
-        networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
+        networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
         darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
       });
 
-
-      // await this.$store.dispatch('main/setEthereumData', this.proxyAddress);
-      console.log(this.proxyAddress);
-      await this.$store.dispatch('main/setRewardBalance', this.proxyAddress, 100);
-
-      // try {
-      //   console.log('Requesting signature and sending transaction...');
-      //   this.FactoryContract.methods.exitAndWithdraw(ethBntBalance, this.recipientAddress)
-      //     .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
-      //     .on('transactionHash', async (txHash) => {
-      //       console.log('txHash: ', txHash);
-      //       notify.hash(txHash);
-      //     })
-      //     .once('receipt', async (receipt) => {
-      //       console.log('Transaction receipt: ', receipt);
-      //       await this.$store.dispatch('main/checkBalances', this.proxyAddress);
-      //       this.isLoading = false;
-      //       this.isExitComplete = true;
-      //     })
-      //     .then((data) => {
-            
-      //     })
-      //     .catch((err) => {
-      //       console.log('Something went wrong exiting pool. See the error message below.');
-      //       console.error(err);
-      //       this.notifyUser('negative', err.message);
-      //       this.isLoading = false;
-      //     });
-      // } catch (err) {
-      //   console.log('Something went wrong exiting pool. See the error message below.');
-      //   console.error(err);
-      //   this.notifyUser('negative', err.message);
-      //   this.isLoading = false;
-      // }
-      /* eslint-disable no-console */
+      try {
+        this.drawNo = this.selectedDrawNo;
+        this.LotteryWeb3.methods.claim(this.selectedDrawNo)
+          .send({ from: this.userAddress, gasLimit: 500000 })
+          .on('transactionHash', async (txHash) => {
+            console.log('txHash: ', txHash);
+            notify.hash(txHash);
+          })
+          .once('receipt', async (receipt) => {
+            console.log('Transaction receipt: ', receipt);
+            this.isMainLoading = false;
+          })
+          .catch((err) => {
+            console.log('Something went wrong. See the error message below.');
+            console.error(err);
+            this.notifyUser('negative', err.message);
+            this.isMainLoading = false;
+          });
+      } catch (err) {
+        console.log('Something went wrong. See the error message below.');
+        console.error(err);
+        this.notifyUser('negative', err.message);
+        this.isMainLoading = false;
+      }
     },
   },
 };
@@ -193,6 +141,6 @@ export default {
 <style lang="stylus" scoped>
 .card {
   max-width: 500px;
-  padding: 1.5rem;
+padding: 1.5rem;
 }
 </style>

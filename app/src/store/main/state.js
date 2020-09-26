@@ -8,6 +8,18 @@ export default function () {
       ethBntBalance: undefined,
       ethTokenBalance: undefined,
       ticketNumber: undefined,
+      magayoInfo: undefined,
+    },
+    lottery: {
+      startTime: undefined,
+      duration: undefined,
+      drawNo: undefined,
+      options: [],
+      entries: [],
+      results: [],
+      drawState: undefined,
+      drawRewards: undefined,
+      drawNumbers: [],
     },
     provider: {}, // raw provider for GSN
     signer: {}, // ethers.js signer

@@ -46,7 +46,6 @@ async function getGasPrice(speed = 'fast') {
   return web3gasPrice;
 }
 
-
 export async function setEthereumData({ commit }, provider) {
   // Get wallet info
   const ethersProvider = new ethers.providers.Web3Provider(provider);
@@ -54,10 +53,16 @@ export async function setEthereumData({ commit }, provider) {
   const userAddress = await signer.getAddress();
   commit('setWallet', { signer, provider, userAddress });
 
+  const web3 = new Web3(provider);
+
   const contracts = {
     Lottery: new ethers.Contract(addresses.lottery, abi.lottery, signer),
     MagayoOracle: new ethers.Contract(addresses.magayoOracle, abi.magayoOracle, signer),
+    LotteryWeb3: new web3.eth.Contract(abi.lottery, addresses.lottery),
+    MagayoOracleWeb3: new web3.eth.Contract(abi.magayoOracle, addresses.magayoOracle),
   };
+  console.log('CONTRACTS');
+  console.log(contracts);
   commit('setContracts', contracts);
 
   let ethBalance;
@@ -82,8 +87,31 @@ export async function setEthereumData({ commit }, provider) {
   commit('setProxyData', proxyData);
 
   // Get gas price to use
-  const gasPrice = await getGasPrice('fast');
-  commit('setGasPrice', gasPrice);
+  // const gasPrice = await getGasPrice('fast');
+  // commit('setGasPrice', gasPrice);
+}
+
+export async function setLotteryData({ commit, state }) {
+  let { drawNo, options } = state.lottery;
+  if (!drawNo) {
+    options = [];
+    drawNo = await state.contracts.Lottery.drawNo();
+    for (let i = 1; i <= drawNo; i += 1) {
+      options.push(i);
+    }
+  }
+  const startTime = await state.contracts.Lottery.startTime();
+  const duration = await state.contracts.Lottery.duration();
+  const drawState = await state.contracts.Lottery.getDrawState(drawNo);
+  const entries = await state.contracts.Lottery.getEntries(drawNo);
+  const results = await state.contracts.Lottery.getResults(drawNo);
+  const drawRewards = await state.contracts.Lottery.getDrawRewards(drawNo);
+  const drawNumbers = await state.contracts.Lottery.getDrawNumbers(drawNo);
+
+  const lotteryData = {
+    startTime, duration, drawNo, options, drawState, entries, results, drawRewards, drawNumbers,
+  };
+  commit('setLotteryData', lotteryData);
 }
 
 export async function getProxy({ commit }, userAddress) {
@@ -94,27 +122,16 @@ export async function getProxy({ commit }, userAddress) {
   commit('setProxyAddress', userProxy);
 }
 
-export async function checkBalances({ commit, state }, proxyAddress) {
-  console.log('Checking for balance updates...'); // eslint-disable-line no-console
+export async function checkResults({ commit, state }, drawNo) {
+  console.log('Checking for updates...'); // eslint-disable-line no-console
   const ethersProvider = new ethers.providers.Web3Provider(state.provider);
-  let ethBalance;
-  let ethTokenBalance;
-  let bntBalance;
-  let ethBntBalance;
+  let results;
 
-  if (proxyAddress !== ethers.constants.AddressZero) {
-    ethBalance = parseFloat(utils.formatEther(await ethersProvider.getBalance(proxyAddress)));
+  if (drawNo && drawNo > 0) {
+    results = await this.Lottery.getResults(drawNo);
   }
 
-  const proxyData = {
-    address: proxyAddress,
-    ethBalance,
-    ethTokenBalance,
-    bntBalance,
-    ethBntBalance,
-  };
-
-  commit('setProxyData', proxyData);
+  commit('setResults', results);
 }
 
 export async function setRewardBalance({ commit, state }, proxyAddress, rewardBalance) {
@@ -143,33 +160,47 @@ export async function setRewardBalance({ commit, state }, proxyAddress, rewardBa
   commit('setProxyData', proxyData);
 }
 
-function createGround(width, height) {
+function createGround(mainDrawn, mainMin, mainMax, bonusDrawn, bonusMin, bonusMax) {
   const result = [];
-  let i;
-  let j;
-  for (i = 0; i < width; i += 1) {
-    result[i] = [];
-    for (j = 0; j < height; j += 1) {
-      result[i][j] = Math.floor(Math.random() * 100) + 1;
+  const checkMain = [];
+  const checkBonus = [];
+  let main;
+  let bonus;
+  // let i;
+  // let j;
+  // for (i = 0; i < width; i += 1) {
+  //   result[i] = [];
+  //   for (j = 0; j < height; j += 1) {
+  //     result[i][j] = Math.floor(Math.random() * 35) + 1;
+  //   }
+  // }
+
+  while (result.length < mainDrawn) {
+    main = Math.floor(Math.random() * (mainMax - mainMin)) + 1;
+    if (checkMain.indexOf(main) === -1) {
+      result.push(main);
     }
   }
+  while (result.length < (Number(mainDrawn) + Number(bonusDrawn))) {
+    bonus = Math.floor(Math.random() * (bonusMax - bonusMin)) + 1;
+    if (checkBonus.indexOf(bonus) === -1) {
+      result.push(bonus);
+    }
+  }
+
   return result;
 }
 
-export function showTickets({ commit }, ticketsAmount) {
+export async function setMagayoInfo({ commit }, info) {
+  commit('setMagayoInfo', info);
+}
+
+export async function showTickets({ commit }, magayoInfo) {
   let arr = [];
-  let r;
-  arr = createGround(ticketsAmount, 7);
-  // if (proxyAddress !== ethers.constants.AddressZero) {
-  // while (arr.length < ticketsAmount) {
-  //   r = Math.floor(Math.random() * 100) + 1;
-  //   if (arr.indexOf(r) === -1) {
-  //     console.log(r);
-  //     arr.push(r);
-  //   }
-  // }
-  // }
-  console.log(arr);
+  arr = createGround(
+    magayoInfo.mainDrawn, magayoInfo.mainMin, magayoInfo.mainMax,
+    magayoInfo.bonusDrawn, magayoInfo.bonusMin, magayoInfo.bonusMax,
+  );
   const proxyData = {
     address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
     ethBalance: 0,
@@ -180,4 +211,8 @@ export function showTickets({ commit }, ticketsAmount) {
   };
 
   commit('setProxyData', proxyData);
+}
+
+export async function setDrawNo({ commit }, drawNo) {
+  commit('setDrawNo', drawNo);
 }

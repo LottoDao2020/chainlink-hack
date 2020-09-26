@@ -36,6 +36,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { ethers } from 'ethers';
 import Onboard from 'bnc-onboard';
 
 let provider;
@@ -68,6 +69,8 @@ export default {
     ...mapState({
       signer: (state) => state.main.signer,
       userAddress: (state) => state.main.userAddress,
+      Lottery: (state) => state.main.contracts.Lottery,
+      MagayoOracle: (state) => state.main.contracts.MagayoOracle,
     }),
   },
 
@@ -104,6 +107,22 @@ export default {
         await onboard.walletSelect();
         await onboard.walletCheck();
         await this.$store.dispatch('main/setEthereumData', provider);
+        await this.$store.dispatch('main/setLotteryData');
+
+        const game = await this.MagayoOracle.game();
+        const gameInfo = await this.MagayoOracle.games(game);
+        const magayoInfo = {
+          name: ethers.utils.parseBytes32String(gameInfo.name),
+          country: ethers.utils.parseBytes32String(gameInfo.country),
+          state: ethers.utils.parseBytes32String(gameInfo.state),
+          mainDrawn: gameInfo.mainDrawn,
+          mainMax: gameInfo.mainMax,
+          mainMin: gameInfo.mainMin,
+          bonusDrawn: gameInfo.bonusDrawn,
+          bonusMax: gameInfo.bonusMax,
+          bonusMin: gameInfo.bonusMin,
+        };
+        await this.$store.dispatch('main/setMagayoInfo', magayoInfo);
       } catch (err) {
         console.error(err); // eslint-disable-line no-console
       } finally {

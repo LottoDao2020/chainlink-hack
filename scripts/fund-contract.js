@@ -1,5 +1,7 @@
-const MagayoOracle = artifacts.require('MagayoOracle')
 const LinkTokenInterface = artifacts.require('LinkTokenInterface')
+const MagayoOracle = artifacts.require('MagayoOracle')
+const Lottery = artifacts.require('Lottery')
+const RandomNumber = artifacts.require('RandomNumber')
 
 /*
   This script is meant to assist with funding the requesting
@@ -8,15 +10,28 @@ const LinkTokenInterface = artifacts.require('LinkTokenInterface')
   can be retrieved by calling the withdrawLink() function.
 */
 
-const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1100000000000000000'
+const magayoOraclePayment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1100000000000000000'
+const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '100000000000000000'
 
 module.exports = async callback => {
   try {
+    // fund magayoOracle
     let magayoOracle = await MagayoOracle.deployed()
     const tokenAddress = await magayoOracle.getChainlinkToken();
     const token = await LinkTokenInterface.at(tokenAddress)
-    console.log('Funding contract:', magayoOracle.address)
-    const tx = await token.transfer(magayoOracle.address, payment)
+    // console.log('Funding magayoOracle contract:', magayoOracle.address)
+    // let tx = await token.transfer(magayoOracle.address, magayoOraclePayment)
+
+    // fund lottery
+    let lottery = await Lottery.deployed()
+    console.log('Funding lottery:', lottery.address)
+    tx = await token.transfer(lottery.address, payment)
+
+    // fund randomNumber
+    let randomNumber = await RandomNumber.deployed()
+    console.log('Funding randomNumber:', randomNumber.address)
+    tx = await token.transfer(randomNumber.address, payment)
+
     callback(tx.tx)
   } catch (err) {
     callback(err)
