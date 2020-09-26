@@ -27,15 +27,15 @@
     "absolutePath": "@chainlink/contracts/src/v0.6/interfaces/PointerInterface.sol",
     "exportedSymbols": {
       "PointerInterface": [
-        5393
+        4674
       ]
     },
-    "id": 5394,
+    "id": 4675,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5387,
+        "id": 4668,
         "literals": [
           "solidity",
           "^",
@@ -43,7 +43,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:23:14"
+        "src": "0:23:13"
       },
       {
         "abstract": false,
@@ -52,9 +52,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 5393,
+        "id": 4674,
         "linearizedBaseContracts": [
-          5393
+          4674
         ],
         "name": "PointerInterface",
         "nodeType": "ContractDefinition",
@@ -63,7 +63,7 @@
             "body": null,
             "documentation": null,
             "functionSelector": "38cc4831",
-            "id": 5392,
+            "id": 4673,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -71,24 +71,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 5388,
+              "id": 4669,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "75:2:14"
+              "src": "75:2:13"
             },
             "returnParameters": {
-              "id": 5391,
+              "id": 4672,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5390,
+                  "id": 4671,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5392,
-                  "src": "101:7:14",
+                  "scope": 4673,
+                  "src": "101:7:13",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -96,10 +96,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5389,
+                    "id": 4670,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "101:7:14",
+                    "src": "101:7:13",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -110,34 +110,34 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "100:9:14"
+              "src": "100:9:13"
             },
-            "scope": 5393,
-            "src": "56:54:14",
+            "scope": 4674,
+            "src": "56:54:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 5394,
-        "src": "25:87:14"
+        "scope": 4675,
+        "src": "25:87:13"
       }
     ],
-    "src": "0:113:14"
+    "src": "0:113:13"
   },
   "legacyAST": {
     "absolutePath": "@chainlink/contracts/src/v0.6/interfaces/PointerInterface.sol",
     "exportedSymbols": {
       "PointerInterface": [
-        5393
+        4674
       ]
     },
-    "id": 5394,
+    "id": 4675,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5387,
+        "id": 4668,
         "literals": [
           "solidity",
           "^",
@@ -145,7 +145,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:23:14"
+        "src": "0:23:13"
       },
       {
         "abstract": false,
@@ -154,9 +154,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 5393,
+        "id": 4674,
         "linearizedBaseContracts": [
-          5393
+          4674
         ],
         "name": "PointerInterface",
         "nodeType": "ContractDefinition",
@@ -165,7 +165,7 @@
             "body": null,
             "documentation": null,
             "functionSelector": "38cc4831",
-            "id": 5392,
+            "id": 4673,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -173,24 +173,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 5388,
+              "id": 4669,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "75:2:14"
+              "src": "75:2:13"
             },
             "returnParameters": {
-              "id": 5391,
+              "id": 4672,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5390,
+                  "id": 4671,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5392,
-                  "src": "101:7:14",
+                  "scope": 4673,
+                  "src": "101:7:13",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -198,10 +198,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5389,
+                    "id": 4670,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "101:7:14",
+                    "src": "101:7:13",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -212,20 +212,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "100:9:14"
+              "src": "100:9:13"
             },
-            "scope": 5393,
-            "src": "56:54:14",
+            "scope": 4674,
+            "src": "56:54:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 5394,
-        "src": "25:87:14"
+        "scope": 4675,
+        "src": "25:87:13"
       }
     ],
-    "src": "0:113:14"
+    "src": "0:113:13"
   },
   "compiler": {
     "name": "solc",
@@ -233,7 +233,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-09-24T17:19:17.580Z",
+  "updatedAt": "2020-09-26T10:22:13.211Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -48,7 +48,12 @@
       </div>
     </div>
 
-    <user-account-info v-if="proxyAddress" />
+    <div
+      class="row justify-center "
+    >
+      <lottery-info v-if="drawNo"/>
+      <magayo-oracle-info v-if="magayoInfo" />
+    </div>
   </q-page>
 </template>
 
@@ -57,7 +62,8 @@ import { mapState } from 'vuex';
 import ConnectWallet from 'components/ConnectWallet';
 import DepositWithWyre from 'components/DepositWithWyre';
 import ExitPool from 'components/ExitPool';
-import UserAccountInfo from 'components/UserAccountInfo';
+import MagayoOracleInfo from 'components/MagayoOracleInfo';
+import LotteryInfo from 'components/LotteryInfo';
 
 export default {
   name: 'Home',
@@ -66,13 +72,16 @@ export default {
     ConnectWallet,
     DepositWithWyre,
     ExitPool,
-    UserAccountInfo,
+    MagayoOracleInfo,
+    LotteryInfo,
   },
 
   computed: {
     ...mapState({
       userAddress: (state) => state.main.userAddress,
       proxyAddress: (state) => state.main.proxy.address,
+      drawNo: (state) => state.main.lottery.drawNo,
+      magayoInfo: (state) => state.main.proxy.magayoInfo,
     }),
 
     isLoading() {

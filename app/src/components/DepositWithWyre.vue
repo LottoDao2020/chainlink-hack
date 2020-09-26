@@ -1,6 +1,7 @@
 <template>
   <div>
     <div
+      v-if="magayoInfo"
       class="row justify-center"
       style="max-width: 900px"
     >
@@ -26,101 +27,24 @@
         <q-card-section>
           <q-btn
             color="primary"
-            label="Buy"
+            label="Enter with 0.01 ETH"
             :loading="isDepositLoading"
             @click="startLuckyDraw"
           />
           <div class="text-caption text-italic q-mt-md">
-            We will help you to pick up the drawing number for each ticket
+            We will generate random number for you
+          </div>
+          <div class="row justify-between">
+            <div class="col-xs-5 text-left text-bold">
+              Ticket Number:
+            </div>
+            <div class="col text-left">
+              {{ ticketNumber }}
+            </div>
           </div>
         </q-card-section>
       </q-card>
 
-      <!-- ENTER POOL -->
-      <q-card
-        class="col text-center q-px-lg q-py-md q-ma-md"
-        style="max-width: 400px"
-      >
-        <q-card-section>
-          <h6>Step 2</h6>
-          <h4 class="text-bold">
-            Check Result
-          </h4>
-        </q-card-section>
-        <q-card-section>
-          <q-select
-            v-model="selectedPool"
-            class="input"
-            :disabled="ethBalance === 0"
-            :options="pools"
-            label="Select Entry"
-          />
-        </q-card-section>
-        <q-card-section>
-          <q-btn
-            color="primary"
-            label="See Result"
-            :loading="isEntryLoading"
-            :disabled="!Boolean(selectedPool) || ethBalance === 0"
-            @click="checkResult"
-          />
-          <div
-            v-if="ethBalance === 0"
-            class="text-caption text-italic q-mt-md"
-          >
-            You have no balance to deposit
-          </div>
-          <div
-            v-else
-            class="text-caption text-italic q-mt-md"
-          >
-            Pick the entry and see result
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- POOL ENTERED -->
-      <q-dialog
-        v-model="isEntryComplete"
-        persistent
-      >
-        <q-card class="text-center q-pa-lg">
-          <q-card-section>
-            <h4 class="row justify-center items-center">
-              <q-icon
-                left
-                name="fas fa-check"
-                class="setup-icon vertical-middle"
-              />
-              <span>You Entered the Pool!</span>
-            </h4>
-          </q-card-section>
-
-          <q-card-section>
-            <div>
-              You have successfully deposited funds into the liquidity pool!
-            </div>
-            <p class="q-mt-lg">
-              <img
-                src="statics/graphics/undraw_celebration_0jvk.png"
-                style="width:30vw;max-width:225px;"
-              >
-            </p>
-            <div>
-              Now sit back and relax as you earn some money.
-            </div>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn
-              v-close-popup
-              flat
-              label="Ok"
-              :color="$q.dark.isActive ? 'white' : 'primary'"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
     </div>
   </div>
 </template>
@@ -129,6 +53,7 @@
 import { mapState } from 'vuex';
 import mixinHelpers from 'src/utils/mixinHelpers';
 import Notify from 'bnc-notify';
+import { ethers } from 'ethers';
 
 export default {
   name: 'DepositWithWyre',
@@ -166,100 +91,54 @@ export default {
       // Helpers
       gasPrice: (state) => state.main.gasPrice,
       FactoryContract: (state) => state.main.contracts.Factory,
+      LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
+      // Magayo
+      magayoInfo: (state) => state.main.proxy.magayoInfo,
     }),
-  },
-
-  mounted() {
-    try {
-    // Get query params (right now there is only one)
-      const string = window.location.search;
-      const parts = string.slice(1).split('=');
-      this.isWaitingForPurchase = parts[1]; // eslint-disable-line prefer-destructuring
-    } catch (err) {
-      //
-    }
-    if (this.isWaitingForPurchase) {
-      // Check for a balance each block
-      this.$store.dispatch('main/checkBalances', this.proxyAddress);
-      this.signer.provider.on('block', () => this.$store.dispatch('main/checkBalances', this.proxyAddress));
-    }
   },
 
   methods: {
     async startLuckyDraw() {
-      // this.isDepositLoading = true;
-      await this.$store.dispatch('main/showTickets', this.ticketsAmount);
-
-      // try {
-      //   // Check if we are in dev or prod
-      //   let wyreUrlPrefix = 'sendwyre';
-      //   if (process.env.WYRE_ENV === 'dev') {
-      //     wyreUrlPrefix = 'testwyre';
-      //   }
-
-      //   // Define where to redirect to once hosted Widget flow is completed
-      //   const widgetRedirectUrl = `${window.location.origin}/?isWaitingForPurchase=true`;
-
-      //   // Define and temporarily save off options used to load the widget
-      //   const widgetOptions = {
-      //     dest: `ethereum:${this.proxyAddress}`,
-      //     destCurrency: 'ETH',
-      //     sourceAmount: this.depositAmount,
-      //     paymentMethod: 'debit-card',
-      //     redirectUrl: widgetRedirectUrl,
-      //     accountId: process.env.WYRE_ACCOUNT_ID,
-      //   };
-      //   this.$q.localStorage.set('widgetDepositOptions', widgetOptions);
-
-      //   // Load the new page and exit this function
-      //   const widgetUrl = `https://pay.${wyreUrlPrefix}.com/purchase?dest=${widgetOptions.dest}&destCurrency=${widgetOptions.destCurrency}&sourceAmount=${widgetOptions.sourceAmount}&paymentMethod=${widgetOptions.paymentMethod}&redirectUrl=${widgetOptions.redirectUrl}&accountId=${widgetOptions.accountId}`;
-      //   window.location.href = widgetUrl;
-      // } catch (err) {
-      //   console.error(err); // eslint-disable-line no-console
-      //   this.notifyUser('negative', err.message);
-      // } finally {
-      //   this.isDepositLoading = false;
-      // }
-    },
-
-    async checkResult() {
-      /* eslint-disable no-console */
-      this.isEntryLoading = true;
-      console.log('Checking Result...');
+      this.isDepositLoading = true;
+      await this.$store.dispatch('main/showTickets', this.magayoInfo);
+      console.log(this.ticketNumber);
 
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
-        networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
+        networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
         darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
       });
-      // try {
-      //   console.log('Requesting signature and sending transaction...');
-      //   this.FactoryContract.methods.checkResult()
-      //     .send({ from: this.userAddress, gas: '1000000', gasPrice: this.gasPrice })
-      //     .on('transactionHash', async (txHash) => {
-      //       console.log('txHash: ', txHash);
-      //       notify.hash(txHash);
-      //     })
-      //     .once('receipt', async (receipt) => {
-      //       console.log('Transaction receipt: ', receipt);
-      //       await this.$store.dispatch('main/checkBalances', this.proxyAddress);
-      //       this.isEntryLoading = false;
-      //       this.isEntryComplete = true;
-      //     })
-      //     .catch((err) => {
-      //       console.log('Something went wrong entering pool. See the error message below.');
-      //       console.error(err);
-      //       this.notifyUser('negative', err.message);
-      //       this.isEntryLoading = false;
-      //     });
-      // } catch (err) {
-      //   console.log('Something went wrong entering pool. See the error message below.');
-      //   console.error(err);
-      //   this.notifyUser('negative', err.message);
-      //   this.isEntryLoading = false;
-      // }
-      /* eslint-disable no-console */
+
+      try {
+        this.LotteryWeb3.methods.buy(this.ticketNumber)
+          .send({
+            from: this.userAddress,
+            gasLimit: 500000,
+            value: ethers.utils.parseEther('0.01'),
+          })
+          .on('transactionHash', async (txHash) => {
+            console.log('txHash: ', txHash);
+            notify.hash(txHash);
+          })
+          .once('receipt', async (receipt) => {
+            console.log('Transaction receipt: ', receipt);
+            await this.$store.dispatch('main/setLotteryData');
+            this.isDepositLoading = false;
+          })
+          .catch((err) => {
+            console.log('Something went wrong. See the error message below.');
+            console.error(err);
+            this.notifyUser('negative', err.message);
+            this.isDepositLoading = false;
+          });
+      } catch (err) {
+        console.log('Something went wrong. See the error message below.');
+        console.error(err);
+        this.notifyUser('negative', err.message);
+        this.isDepositLoading = false;
+      }
     },
+
   },
 };
 </script>

@@ -59,7 +59,11 @@ contract Lottery is ChainlinkClient, Ownable {
   IMagayoOracle iMagayoOracle;
   IRandomNumber iRandomNumber;
   bytes32 game;
+  uint256 mainMin;
+  uint256 mainMax;
   uint256 mainDrawn;
+  uint256 bonusMin;
+  uint256 bonusMax;
   uint256 bonusDrawn;
 
   struct Draw {
@@ -81,7 +85,11 @@ contract Lottery is ChainlinkClient, Ownable {
     iMagayoOracle = IMagayoOracle(iGovernance.magayoOracle());
     iRandomNumber = IRandomNumber(iGovernance.randomNumber());
     game = iMagayoOracle.game();
+    mainMin = iMagayoOracle.games(game).mainMin;
+    mainMax = iMagayoOracle.games(game).mainMax;
     mainDrawn = iMagayoOracle.games(game).mainDrawn;
+    bonusMin = iMagayoOracle.games(game).bonusMin;
+    bonusMax = iMagayoOracle.games(game).bonusMax;
     bonusDrawn = iMagayoOracle.games(game).bonusDrawn;
     drawNo = 1;
   }
@@ -236,11 +244,11 @@ contract Lottery is ChainlinkClient, Ownable {
     draws[drawNo].state = LOTTERY_STATE.CLOSED;
     draws[drawNo].rewards = address(this).balance;
     for (uint32 i = 0; i < mainDrawn; i++) {
-      draws[drawNo].numbers.push(uint32(_number % 100));
+      draws[drawNo].numbers.push(uint32(_number % (mainMax - mainMin + 1)));
       _number = _number / 100;
     }
     for (uint32 i = 0; i < bonusDrawn; i++) {
-      draws[drawNo].numbers.push(uint32(_number % 100));
+      draws[drawNo].numbers.push(uint32(_number % (bonusMax - bonusMin + 1)));
       _number = _number / 100;
     }
     drawNo++;

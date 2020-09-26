@@ -45,3 +45,19 @@ export function setResults(state, results) {
 export function setMagayoInfo(state, info) {
   state.proxy.magayoInfo = info;
 }
+
+export function setLotteryData(state, lotteryData) {
+  state.lottery.startTime = lotteryData.startTime;
+  state.lottery.duration = lotteryData.duration;
+  state.lottery.drawNo = lotteryData.drawNo;
+  state.lottery.options = lotteryData.options;
+  state.lottery.drawState = lotteryData.drawState;
+  state.lottery.entries = lotteryData.entries;
+  state.lottery.results = lotteryData.results;
+  state.lottery.drawRewards = lotteryData.drawRewards;
+  state.lottery.drawNumbers = lotteryData.drawNumbers;
+}
+
+export function setDrawNo(state, drawNo) {
+  state.lottery.drawNo = drawNo;
+}

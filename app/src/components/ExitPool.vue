@@ -2,13 +2,15 @@
   <div>
     <!-- EXIT FORM -->
     <q-card
+      v-if="drawNo"
       class="col text-center q-px-lg q-py-md q-ma-md"
       style="max-width: 450px"
+      :loading="isMainLoading"
     >
       <q-card-section>
-        <h6>Step 3 (After game finish)</h6>
+        <h6>Step 2 </h6>
         <h4 class="text-bold">
-          Claim
+          Check & Claim
         </h4>
       </q-card-section>
 
@@ -19,33 +21,29 @@
       </q-card-section>
 
       <q-card-section>
-        <q-input
-          v-model="recipientAddress"
+        <q-select
+          v-model="selectedDrawNo"
           class="q-mb-md"
           filled
-          label="Address to withdraw to"
-        >
-          <template v-slot:append>
-            <q-btn
-              :color="$q.dark.isActive ? 'white' : 'primary'"
-              flat
-              label="Keep in proxy"
-              @click="setRecipientAddressToProxy"
-            />
-          </template>
-        </q-input>
-        <q-btn
-          color="primary"
-          label="Claim"
-          :loading="isLoading"
-          :disabled="ethBntBalance === 0"
-          @click="exitPool"
-        />
-        <div
-          v-if="ethBntBalance === 0"
-          class="text-caption text-italic text-center q-mt-md"
-        >
-          You have no pool tokens to withdraw
+          label="draw number to claim with"
+          :options="options">
+        </q-select>
+        <div class="row">
+          <q-btn
+            color="primary"
+            class="col-3"
+            label="Check"
+            :loading="isMainLoading"
+            @click="check"
+          />
+          <div class="col-6"></div>
+          <q-btn
+            class="col-3"
+            color="primary"
+            label="Claim"
+            :loading="isMainLoading"
+            @click="claim"
+          />
         </div>
       </q-card-section>
     </q-card>
@@ -65,9 +63,9 @@ export default {
 
   data() {
     return {
-      isLoading: false,
-      isExitComplete: false,
+      isMainLoading: false,
       recipientAddress: undefined,
+      selectedDrawNo: undefined,
     };
   },
 
@@ -82,6 +80,9 @@ export default {
       Lottery: (state) => state.main.contracts.Lottery,
       MagayoOracle: (state) => state.main.contracts.MagayoOracle,
       LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
+      // Lottery
+      options: (state) => state.main.lottery.options,
+      drawNo: (state) => state.main.lottery.drawNo,
     }),
   },
 
@@ -90,10 +91,17 @@ export default {
       this.recipientAddress = this.proxyAddress;
     },
 
-    async exitPool({ commit }) {
+    async check() {
+      this.isMainLoading = true;
+      await this.$store.dispatch('main/setDrawNo', this.selectedDrawNo);
+      await this.$store.dispatch('main/setLotteryData');
+      this.isMainLoading = false;
+    },
+
+    async claim({ commit }) {
       /* eslint-disable no-console */
-      this.isLoading = true;
-      console.log('Initializing pool exit...');
+      this.isMainLoading = true;
+      console.log('selectedDrawNo: ', this.selectedDrawNo);
 
       const notify = Notify({
         dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
@@ -102,26 +110,8 @@ export default {
       });
 
       try {
-        console.log('Lottery: ', this.Lottery);
-        console.log('MagayoOracle: ', this.MagayoOracle);
-        // const drawNo = await this.Lottery.drawNo();
-        const drawNo = 1;
-        console.log(drawNo);
-        console.log('getEntries: ', await this.Lottery.getEntries(drawNo));
-        console.log('getResults: ', await this.Lottery.getResults(drawNo));
-        console.log('getDrawState: ', await this.Lottery.getDrawState(drawNo));
-        console.log('getDrawRewards: ', await this.Lottery.getDrawRewards(drawNo));
-        console.log('getDrawNumbers: ', await this.Lottery.getDrawNumbers(drawNo));
-
-        const game = await this.MagayoOracle.game();
-        const gameInfo = await this.MagayoOracle.games(game);
-        console.log(gameInfo);
-        console.log(gameInfo.name);
-
-        console.log(ethers.utils.parseBytes32String(gameInfo.name));
-        console.log(gameInfo.mainDrawn);
-
-        this.LotteryWeb3.methods.claim(drawNo)
+        this.drawNo = this.selectedDrawNo;
+        this.LotteryWeb3.methods.claim(this.selectedDrawNo)
           .send({ from: this.userAddress, gasLimit: 500000 })
           .on('transactionHash', async (txHash) => {
             console.log('txHash: ', txHash);
@@ -129,26 +119,19 @@ export default {
           })
           .once('receipt', async (receipt) => {
             console.log('Transaction receipt: ', receipt);
-            // await this.$store.dispatch('main/checkResults', drawNo);
-            // const tx = await this.provider.getTransaction(receipt);
-            // console.log(tx);
-            // const code = await this.provider.call(tx, tx.blockNumber);
-            // const reason = ethers.utils.toUtf8String(code);
-            // console.log(reason);
-            this.isLoading = false;
-            // this.isExitComplete = true;
+            this.isMainLoading = false;
           })
           .catch((err) => {
             console.log('Something went wrong. See the error message below.');
             console.error(err);
             this.notifyUser('negative', err.message);
-            this.isLoading = false;
+            this.isMainLoading = false;
           });
       } catch (err) {
         console.log('Something went wrong. See the error message below.');
         console.error(err);
         this.notifyUser('negative', err.message);
-        this.isLoading = false;
+        this.isMainLoading = false;
       }
     },
   },

@@ -87,8 +87,31 @@ export async function setEthereumData({ commit }, provider) {
   commit('setProxyData', proxyData);
 
   // Get gas price to use
-  const gasPrice = await getGasPrice('fast');
-  commit('setGasPrice', gasPrice);
+  // const gasPrice = await getGasPrice('fast');
+  // commit('setGasPrice', gasPrice);
+}
+
+export async function setLotteryData({ commit, state }) {
+  let { drawNo, options } = state.lottery;
+  if (!drawNo) {
+    options = [];
+    drawNo = await state.contracts.Lottery.drawNo();
+    for (let i = 1; i <= drawNo; i += 1) {
+      options.push(i);
+    }
+  }
+  const startTime = await state.contracts.Lottery.startTime();
+  const duration = await state.contracts.Lottery.duration();
+  const drawState = await state.contracts.Lottery.getDrawState(drawNo);
+  const entries = await state.contracts.Lottery.getEntries(drawNo);
+  const results = await state.contracts.Lottery.getResults(drawNo);
+  const drawRewards = await state.contracts.Lottery.getDrawRewards(drawNo);
+  const drawNumbers = await state.contracts.Lottery.getDrawNumbers(drawNo);
+
+  const lotteryData = {
+    startTime, duration, drawNo, options, drawState, entries, results, drawRewards, drawNumbers,
+  };
+  commit('setLotteryData', lotteryData);
 }
 
 export async function getProxy({ commit }, userAddress) {
@@ -137,10 +160,12 @@ export async function setRewardBalance({ commit, state }, proxyAddress, rewardBa
   commit('setProxyData', proxyData);
 }
 
-function createGround(mainmin, mainmax, specialmin, specialmax) {
+function createGround(mainDrawn, mainMin, mainMax, bonusDrawn, bonusMin, bonusMax) {
   const result = [];
-  let r;
-  const s = Math.floor(Math.random() * 20) + 1;
+  const checkMain = [];
+  const checkBonus = [];
+  let main;
+  let bonus;
   // let i;
   // let j;
   // for (i = 0; i < width; i += 1) {
@@ -150,32 +175,32 @@ function createGround(mainmin, mainmax, specialmin, specialmax) {
   //   }
   // }
 
-  while (result.length < 7) {
-    r = Math.floor(Math.random() * 35) + 1;
-    if (result.indexOf(r) === -1) {
-      console.log(r);
-      result.push(r);
+  while (result.length < mainDrawn) {
+    main = Math.floor(Math.random() * (mainMax - mainMin)) + 1;
+    if (checkMain.indexOf(main) === -1) {
+      result.push(main);
+    }
+  }
+  while (result.length < (Number(mainDrawn) + Number(bonusDrawn))) {
+    bonus = Math.floor(Math.random() * (bonusMax - bonusMin)) + 1;
+    if (checkBonus.indexOf(bonus) === -1) {
+      result.push(bonus);
     }
   }
 
-  result.push(s);
   return result;
 }
 
 export async function setMagayoInfo({ commit }, info) {
-  console.log('INFO');
-  console.log(info);
   commit('setMagayoInfo', info);
 }
 
-export async function showTickets({ commit }, ticketsAmount) {
+export async function showTickets({ commit }, magayoInfo) {
   let arr = [];
-  arr = createGround(ticketsAmount, 1, 35, 1, 20);
-  // magayoArr = getMagayoInfo(state);
-  // if (proxyAddress !== ethers.constants.AddressZero) {
-
-  // }
-  console.log(arr);
+  arr = createGround(
+    magayoInfo.mainDrawn, magayoInfo.mainMin, magayoInfo.mainMax,
+    magayoInfo.bonusDrawn, magayoInfo.bonusMin, magayoInfo.bonusMax,
+  );
   const proxyData = {
     address: '0xea3Dd3cC5F4AF2b6adD5A6bCF77bc05d1C1800a0',
     ethBalance: 0,
@@ -186,4 +211,8 @@ export async function showTickets({ commit }, ticketsAmount) {
   };
 
   commit('setProxyData', proxyData);
+}
+
+export async function setDrawNo({ commit }, drawNo) {
+  commit('setDrawNo', drawNo);
 }
