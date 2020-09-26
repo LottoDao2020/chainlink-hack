@@ -1,5 +1,5 @@
 # Use the official image as a parent image.
-FROM node:current-slim
+FROM node:14-alpine
 
 # Set the working directory.
 WORKDIR /usr/src/app
@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json .
 
 # Run the command inside your image filesystem.
+RUN apk add git
 RUN npm install
 
 # Add metadata to the image to describe which port the container is listening on at runtime.
