@@ -57,6 +57,16 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <q-footer
+      class="q-mx-md q-mt-md"
+      style="color: #000000; background-color: rgba(0,0,0,0)"
+    >
+      <div
+        class="text-caption text-right dark-toggle"
+      >
+        <p>2020 <a href="https://devpost.com/submit-to/10254-chainlink-virtual-hackathon/submit/lottery-dao">Chainlink Hackathon</a> Entry. Source: <a href="https://github.com/LottoDao2020/chainlink-hack">Github</a></p>
+      </div>
+    </q-footer>
   </q-layout>
 </template>
 
