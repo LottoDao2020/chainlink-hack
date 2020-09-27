@@ -17,6 +17,19 @@
             </div>
             <div class="col text-left">
               {{ countdown }}
+              <q-btn
+                v-if="drawState == 0"
+                color="primary"
+                class="col-3"
+                label="Start New Game"
+                :loading="isStartLoading"
+                @click="start"
+              />
+              <small
+                v-if="drawState == 0"
+              >
+                Please note: More than 0.1 Link is required in the Lottery contract balance in order to start a new game
+              </small>
             </div>
           </div>
           <div class="row justify-between">
@@ -75,12 +88,14 @@
 
 <script>
 import { mapState } from 'vuex';
+import Notify from 'bnc-notify';
 
 export default {
   name: 'LotteryInfo',
 
   data() {
     return {
+      isStartLoading: false,
       countdown: undefined,
     };
   },
@@ -117,8 +132,48 @@ export default {
       results: (state) => state.main.lottery.results,
       drawRewards: (state) => state.main.lottery.drawRewards,
       drawNumbers: (state) => state.main.lottery.drawNumbers,
+      LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
+      userAddress: (state) => state.main.userAddress,
     }),
   },
+
+  methods: {
+    async start({ commit }) {
+      /* eslint-disable no-console */
+      this.isStartLoading = true;
+
+      const notify = Notify({
+        dappId: process.env.BLOCKNATIVE_API_KEY, // [String] The API key created by step one above
+        networkId: 4, // [Integer] The Ethereum network ID your Dapp uses.
+        darkMode: Boolean(this.$q.localStorage.getItem('isDark')),
+      });
+
+      try {
+        this.LotteryWeb3.methods.startNewLottery()
+          .send({ from: this.userAddress, gasLimit: 500000 })
+          .on('transactionHash', async (txHash) => {
+            console.log('txHash: ', txHash);
+            notify.hash(txHash);
+          })
+          .once('receipt', async (receipt) => {
+            console.log('Transaction receipt: ', receipt);
+            await this.$store.dispatch('main/setLotteryData');
+            this.isStartLoading = false;
+          })
+          .catch((err) => {
+            console.log('Something went wrong. See the error message below.');
+            console.error(err);
+            this.notifyUser('negative', err.message);
+            this.isStartLoading = false;
+          });
+      } catch (err) {
+        console.log('Something went wrong. See the error message below.');
+        console.error(err);
+        this.notifyUser('negative', err.message);
+        this.isStartLoading = false;
+      }
+    },
+  }
 };
 </script>
 

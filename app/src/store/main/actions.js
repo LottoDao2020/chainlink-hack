@@ -102,11 +102,21 @@ export async function setLotteryData({ commit, state }) {
   }
   const startTime = await state.contracts.Lottery.startTime();
   const duration = await state.contracts.Lottery.duration();
-  const drawState = await state.contracts.Lottery.getDrawState(drawNo);
+  let drawState = await state.contracts.Lottery.getDrawState(drawNo);
   const entries = await state.contracts.Lottery.getEntries(drawNo);
   const results = await state.contracts.Lottery.getResults(drawNo);
   const drawRewards = await state.contracts.Lottery.getDrawRewards(drawNo);
   const drawNumbers = await state.contracts.Lottery.getDrawNumbers(drawNo);
+
+  if (entries.length > 0) {
+    for (let i = 0; i < entries.length; i += 1) {
+      entries[i] = entries[i].toString();
+    }
+  }
+
+  if (drawState === 0) drawState = 'Closed';
+  if (drawState === 1) drawState = 'Open';
+  if (drawState === 2) drawState = 'Calculating';
 
   const lotteryData = {
     startTime, duration, drawNo, options, drawState, entries, results, drawRewards, drawNumbers,
@@ -178,12 +188,14 @@ function createGround(mainDrawn, mainMin, mainMax, bonusDrawn, bonusMin, bonusMa
   while (result.length < mainDrawn) {
     main = Math.floor(Math.random() * (mainMax - mainMin)) + 1;
     if (checkMain.indexOf(main) === -1) {
+      checkMain.push(main);
       result.push(main);
     }
   }
   while (result.length < (Number(mainDrawn) + Number(bonusDrawn))) {
     bonus = Math.floor(Math.random() * (bonusMax - bonusMin)) + 1;
     if (checkBonus.indexOf(bonus) === -1) {
+      checkBonus.push(bonus);
       result.push(bonus);
     }
   }

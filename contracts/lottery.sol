@@ -155,8 +155,8 @@ contract Lottery is ChainlinkClient, Ownable {
           }
         }
         uint32 bonusWinning = 0;
-        for (uint32 j = 0; j < bonusDrawn; j++){
-          for(uint32 k = 0; k < bonusDrawn; k++){
+        for (uint256 j = mainDrawn; j < mainDrawn + bonusDrawn; j++){
+          for(uint256 k = mainDrawn; k < mainDrawn + bonusDrawn; k++){
             if(entries[msg.sender][_drawNo][i][j] == draws[_drawNo].numbers[k]){
               bonusWinning++;
             }
@@ -217,6 +217,24 @@ contract Lottery is ChainlinkClient, Ownable {
     // Using custom duration for easy testing
     // uint256 duration = iMagayoOracle.duration();
     duration = _duration;
+    startTime = now;
+    req.addUint("until", now + duration);
+    sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
+    emit LogNewLottery(drawNo, duration, startTime);
+  }
+
+  function startNewLottery() external {
+    require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
+    // More than 1 minute
+    require(duration >= 60, "time-too-short");
+    // Less than 1 week
+    require(duration <= 604800, "time-too-long");
+    draws[drawNo].state = LOTTERY_STATE.OPEN;
+    Chainlink.Request memory req = buildChainlinkRequest(
+      CHAINLINK_ALARM_JOB_ID,
+      address(this),
+      this.fulfillAlarm.selector
+    );
     startTime = now;
     req.addUint("until", now + duration);
     sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);

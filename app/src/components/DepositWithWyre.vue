@@ -34,7 +34,10 @@
           <div class="text-caption text-italic q-mt-md">
             We will generate random number for you
           </div>
-          <div class="row justify-between">
+          <div
+            v-if="ticketNumber"
+            class="row justify-between"
+          >
             <div class="col-xs-5 text-left text-bold">
               Ticket Number:
             </div>

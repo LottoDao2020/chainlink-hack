@@ -10,8 +10,8 @@ const RandomNumber = artifacts.require('RandomNumber')
   can be retrieved by calling the withdrawLink() function.
 */
 
-const magayoOraclePayment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1100000000000000000'
-const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '100000000000000000'
+const magayoOraclePayment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1100000000000000000' // 11 Link
+const payment = process.env.TRUFFLE_CL_BOX_PAYMENT || '1000000000000000000' // 1 Link
 
 module.exports = async callback => {
   try {

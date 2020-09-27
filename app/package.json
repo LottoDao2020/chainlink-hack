@@ -8,9 +8,10 @@
   "author": "LottoDAO",
   "scripts": {
     "dev": "source .env && npx quasar dev",
-    "build": "git push && source .env && npx quasar build && npx firebase deploy",
+    "build": "git push && source .env && npx quasar build",
     "lint": "eslint --ext .js,.vue src",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "deploy": "gh-pages -d dist/ssr"
   },
   "dependencies": {
     "@openzeppelin/gsn-provider": "^0.1.10",
