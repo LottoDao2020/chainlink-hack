@@ -18,7 +18,7 @@
             <div class="col text-left">
               {{ countdown }}
               <q-btn
-                v-if="drawState == 0"
+                v-if="drawState == 'Closed'"
                 color="primary"
                 class="col-3"
                 label="Start New Game"
@@ -26,7 +26,7 @@
                 @click="start"
               />
               <small
-                v-if="drawState == 0"
+                v-if="drawState == 'Closed'"
               >
                 Please note: More than 0.1 Link is required in the Lottery contract balance in order to start a new game
               </small>

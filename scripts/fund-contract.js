@@ -28,9 +28,9 @@ module.exports = async callback => {
     tx = await token.transfer(lottery.address, payment)
 
     // fund randomNumber
-    let randomNumber = await RandomNumber.deployed()
-    console.log('Funding randomNumber:', randomNumber.address)
-    tx = await token.transfer(randomNumber.address, payment)
+    // let randomNumber = await RandomNumber.deployed()
+    // console.log('Funding randomNumber:', randomNumber.address)
+    // tx = await token.transfer(randomNumber.address, payment)
 
     callback(tx.tx)
   } catch (err) {
