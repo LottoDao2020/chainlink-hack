@@ -5,9 +5,7 @@
   "author": "LottoDAO",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "build": "npx quasar build",
-    "heroku-postbuild": "yarn && yarn build"
+    "start": "node index.js"
   },
   "dependencies": {
     "@openzeppelin/gsn-provider": "0.1.10",
