@@ -108,6 +108,7 @@ export default {
         await onboard.walletCheck();
         await this.$store.dispatch('main/setEthereumData', provider);
         await this.$store.dispatch('main/setLotteryData');
+        await this.$store.dispatch('main/setCountdown');
 
         const game = await this.MagayoOracle.game();
         const gameInfo = await this.MagayoOracle.games(game);
