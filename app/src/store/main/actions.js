@@ -92,21 +92,21 @@ export async function setEthereumData({ commit }, provider) {
 }
 
 export async function setLotteryData({ commit, state }) {
-  let { drawNo, options } = state.lottery;
-  if (!drawNo) {
-    options = [];
-    drawNo = await state.contracts.Lottery.drawNo();
-    for (let i = 1; i <= drawNo; i += 1) {
-      options.push(i);
-    }
+  let { drawNo, options, selectedDrawNo } = state.lottery;
+  options = [];
+  drawNo = await state.contracts.Lottery.drawNo();
+  for (let i = 1; i <= drawNo; i += 1) {
+    options.push(i);
   }
+  if (!selectedDrawNo) selectedDrawNo = drawNo;
   const startTime = await state.contracts.Lottery.startTime();
   const duration = await state.contracts.Lottery.duration();
-  let drawState = await state.contracts.Lottery.getDrawState(drawNo);
-  const entries = await state.contracts.Lottery.getEntries(drawNo);
-  const results = await state.contracts.Lottery.getResults(drawNo);
-  const drawRewards = await state.contracts.Lottery.getDrawRewards(drawNo);
-  const drawNumbers = await state.contracts.Lottery.getDrawNumbers(drawNo);
+  let drawState = await state.contracts.Lottery.getDrawState(selectedDrawNo);
+  const entries = await state.contracts.Lottery.getEntries(selectedDrawNo);
+  const results = await state.contracts.Lottery.getResults(selectedDrawNo);
+  let drawRewards = await state.contracts.Lottery.getDrawRewards(selectedDrawNo);
+  drawRewards = ethers.utils.formatEther(drawRewards);
+  const drawNumbers = await state.contracts.Lottery.getDrawNumbers(selectedDrawNo);
 
   if (entries.length > 0) {
     for (let i = 0; i < entries.length; i += 1) {
@@ -119,7 +119,7 @@ export async function setLotteryData({ commit, state }) {
   if (drawState === 2) drawState = 'Calculating';
 
   const lotteryData = {
-    startTime, duration, drawNo, options, drawState, entries, results, drawRewards, drawNumbers,
+    startTime, duration, drawNo, selectedDrawNo, options, drawState, entries, results, drawRewards, drawNumbers,
   };
   commit('setLotteryData', lotteryData);
 }
@@ -225,6 +225,31 @@ export async function showTickets({ commit }, magayoInfo) {
   commit('setProxyData', proxyData);
 }
 
-export async function setDrawNo({ commit }, drawNo) {
-  commit('setDrawNo', drawNo);
+export async function setSelectedDrawNo({ commit }, drawNo) {
+  commit('setSelectedDrawNo', drawNo);
+}
+
+export async function setCountdown({ commit, state }) {
+  const { startTime, duration } = state.lottery;
+  let { countdown } = state.lottery;
+  const x = setInterval(async () => {
+    // Get today's date and time
+    const now = new Date().getTime();
+    const countDownDate = new Date(startTime * 1000 + duration * 1000).getTime();
+    // Find the distance between now and the count down date
+    const distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    countdown = `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+    // If the count down is over, write some text
+    if (distance < 0) {
+      clearInterval(x);
+      countdown = 'No Active Game';
+    }
+    commit('setCountdown', countdown);
+  }, 1000);
 }

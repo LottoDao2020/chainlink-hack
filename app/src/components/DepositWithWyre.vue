@@ -27,6 +27,7 @@
         <q-card-section>
           <q-btn
             color="primary"
+            :disabled="drawState != 'Open'"
             label="Enter with 0.01 ETH"
             :loading="isDepositLoading"
             @click="startLuckyDraw"
@@ -97,6 +98,8 @@ export default {
       LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
       // Magayo
       magayoInfo: (state) => state.main.proxy.magayoInfo,
+      // Lottery
+      drawState: (state) => state.main.lottery.drawState,
     }),
   },
 

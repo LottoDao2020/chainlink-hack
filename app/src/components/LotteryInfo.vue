@@ -25,11 +25,6 @@
                 :loading="isStartLoading"
                 @click="start"
               />
-              <small
-                v-if="drawState == 'Closed'"
-              >
-                Please note: More than 0.1 Link is required in the Lottery contract balance in order to start a new game
-              </small>
             </div>
           </div>
           <div class="row justify-between">
@@ -37,7 +32,15 @@
               Draw Number:
             </div>
             <div class="col text-left">
-              {{ drawNo }}
+              {{ selectedDrawNo }}
+            </div>
+          </div>
+          <div class="row justify-between">
+            <div class="col-xs-5 text-left text-bold">
+              Draw State:
+            </div>
+            <div class="col text-left">
+              {{ drawState }}
             </div>
           </div>
           <div class="row justify-between">
@@ -58,18 +61,10 @@
           </div>
           <div class="row justify-between">
             <div class="col-xs-5 text-left text-bold">
-              Draw State:
+              Draw Rewards:
             </div>
             <div class="col text-left">
-              {{ drawState }}
-            </div>
-          </div>
-          <div class="row justify-between">
-            <div class="col-xs-5 text-left text-bold">
-              Total Draw Rewards:
-            </div>
-            <div class="col text-left">
-              {{ drawRewards }}
+              {{ drawRewards }} ETH
             </div>
           </div>
           <div class="row justify-between">
@@ -96,30 +91,7 @@ export default {
   data() {
     return {
       isStartLoading: false,
-      countdown: undefined,
     };
-  },
-
-  async mounted() {
-    const x = setInterval(async () => {
-      // Get today's date and time
-      const now = new Date().getTime();
-      const countDownDate = new Date(this.startTime * 1000 + this.duration * 1000).getTime();
-      // Find the distance between now and the count down date
-      const distance = countDownDate - now;
-
-      // Time calculations for days, hours, minutes and seconds
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      this.countdown = `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
-      // If the count down is over, write some text
-      if (distance < 0) {
-        clearInterval(x);
-        this.countdown = 'No Active Game';
-      }
-    }, 1000);
   },
 
   computed: {
@@ -127,9 +99,11 @@ export default {
       startTime: (state) => state.main.lottery.startTime,
       duration: (state) => state.main.lottery.duration,
       drawNo: (state) => state.main.lottery.drawNo,
+      selectedDrawNo: (state) => state.main.lottery.selectedDrawNo,
       drawState: (state) => state.main.lottery.drawState,
       entries: (state) => state.main.lottery.entries,
       results: (state) => state.main.lottery.results,
+      countdown: (state) => state.main.lottery.countdown,
       drawRewards: (state) => state.main.lottery.drawRewards,
       drawNumbers: (state) => state.main.lottery.drawNumbers,
       LotteryWeb3: (state) => state.main.contracts.LotteryWeb3,
@@ -157,7 +131,9 @@ export default {
           })
           .once('receipt', async (receipt) => {
             console.log('Transaction receipt: ', receipt);
+            await this.$store.dispatch('main/setSelectedDrawNo', this.drawNo);
             await this.$store.dispatch('main/setLotteryData');
+            await this.$store.dispatch('main/setCountdown');
             this.isStartLoading = false;
           })
           .catch((err) => {
@@ -173,7 +149,7 @@ export default {
         this.isStartLoading = false;
       }
     },
-  }
+  },
 };
 </script>
 

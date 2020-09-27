@@ -10,6 +10,12 @@
     </div>
 
     <!-- Contract Interataction -->
+    <div
+      class="row justify-center "
+    >
+      <lottery-info v-if="drawNo"/>
+      <magayo-oracle-info v-if="magayoInfo" />
+    </div>
     <div class="container q-py-xl">
       <div
         v-if="!userAddress"
@@ -31,13 +37,6 @@
       </div>
       <div v-else>
         <div
-          v-if="!proxyAddress"
-          class="row justify-center "
-        >
-          <!-- <deploy-proxy /> -->
-        </div>
-        <div
-          v-else
           class="row justify-center "
         >
           <!-- TWO CARDS FOR DEPOSITING -->
@@ -48,12 +47,6 @@
       </div>
     </div>
 
-    <div
-      class="row justify-center "
-    >
-      <lottery-info v-if="drawNo"/>
-      <magayo-oracle-info v-if="magayoInfo" />
-    </div>
   </q-page>
 </template>
 

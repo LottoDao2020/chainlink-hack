@@ -93,8 +93,9 @@ export default {
 
     async check() {
       this.isMainLoading = true;
-      await this.$store.dispatch('main/setDrawNo', this.selectedDrawNo);
+      await this.$store.dispatch('main/setSelectedDrawNo', this.selectedDrawNo);
       await this.$store.dispatch('main/setLotteryData');
+      await this.$store.dispatch('main/setCountdown');
       this.isMainLoading = false;
     },
 

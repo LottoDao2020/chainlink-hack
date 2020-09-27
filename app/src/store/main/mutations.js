@@ -50,6 +50,7 @@ export function setLotteryData(state, lotteryData) {
   state.lottery.startTime = lotteryData.startTime;
   state.lottery.duration = lotteryData.duration;
   state.lottery.drawNo = lotteryData.drawNo;
+  state.lottery.selectedDrawNo = lotteryData.selectedDrawNo;
   state.lottery.options = lotteryData.options;
   state.lottery.drawState = lotteryData.drawState;
   state.lottery.entries = lotteryData.entries;
@@ -58,6 +59,10 @@ export function setLotteryData(state, lotteryData) {
   state.lottery.drawNumbers = lotteryData.drawNumbers;
 }
 
-export function setDrawNo(state, drawNo) {
-  state.lottery.drawNo = drawNo;
+export function setSelectedDrawNo(state, drawNo) {
+  state.lottery.selectedDrawNo = drawNo;
+}
+
+export function setCountdown(state, countdown) {
+  state.lottery.countdown = countdown;
 }

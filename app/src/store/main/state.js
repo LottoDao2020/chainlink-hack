@@ -14,6 +14,8 @@ export default function () {
       startTime: undefined,
       duration: undefined,
       drawNo: undefined,
+      selectedDrawNo: undefined,
+      countdown: undefined,
       options: [],
       entries: [],
       results: [],

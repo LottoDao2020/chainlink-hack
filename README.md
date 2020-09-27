@@ -100,14 +100,36 @@ Node v10.16.3
 
 Project taglines:
 
-1. What's LottoDao?
+1. What's LottoDAO?
 
-LottoDao is a decentralized lottery application based on the Ethereum blockchain and synchronized with Australian major lottery platforms.
+LottoDAO is a decentralised lottery application based on the Ethereum blockchain and synchronised with Global major lottery platforms.
 
-2. What's the difference between LottoDao and other lottery platforms?
+2. What's the difference between LottoDAO and other lottery platforms?
 
-LottoDao uses blockchain and Chainlink, the pivotal data is base on smart contracts, which is safe and won't be intefered by any third party.
+LottoDAO uses blockchain and Chainlink, the pivotal data is base on smart contracts, which is safe and won't be interfered by any third party.
 
-3. What's the main advantage of LottoDao?
+3. What's the main advantage of LottoDAO?
 
-With the advantage of utilizing blockchain, LottoDao is more independent, as well as autonomous; also it allows lottery participants to purchase lotto entries in a secure way and makes the lottery transparent.
+With the advantage of utilising blockchain, LottoDAO is bringing off-chain data into on-chain. And it is more independent, as well as autonomous; also it allows lottery participants to purchase lotto entries in a secure way and makes the lottery transparent.
+
+## Inspiration
+It was inspired by other lottery game
+
+## What it does
+We want to enhance lottery game with off-chain lottery information such as rules.
+
+## How I built it
+We built it with Solidity to create smart contract. Frontend running vue.js 
+
+## Challenges I ran into
+- Using Chainlink to get off-chain data to on-chain
+- Using Chainlink to with alarm job and getting VRF random number
+
+## Accomplishments that I'm proud of
+It's an on-chain lottery game with off-chain game information but secured by blockchain with transparent and non-changeable. 
+
+## What I learned
+Solidity, Chainlink, Vuejs
+
+## What's next for Lottery DAO
+get traction and feedback from users. 

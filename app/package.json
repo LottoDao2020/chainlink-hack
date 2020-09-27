@@ -8,10 +8,13 @@
   "author": "LottoDAO",
   "scripts": {
     "dev": "source .env && npx quasar dev",
-    "build": "source .env && npx quasar build -m ssr",
+    "buildSSR": "source .env && npx quasar build -m ssr",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "deploy": "gh-pages -d dist/ssr"
+    "start": "node server.js",
+    "heroku-postbuild": "yarn && yarn build",
+    "deploy": "gh-pages -d dist/spa",
+    "build": "npx quasar build"
   },
   "dependencies": {
     "@openzeppelin/gsn-provider": "^0.1.10",

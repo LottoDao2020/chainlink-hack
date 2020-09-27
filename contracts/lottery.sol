@@ -207,7 +207,7 @@ contract Lottery is ChainlinkClient, Ownable {
   }
 
   function startNewLottery(uint256 _duration) external onlyOwner {
-    require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-open");
+    require(draws[drawNo].state == LOTTERY_STATE.CLOSED, "lottery-not-closed");
     draws[drawNo].state = LOTTERY_STATE.OPEN;
     Chainlink.Request memory req = buildChainlinkRequest(
       CHAINLINK_ALARM_JOB_ID,
