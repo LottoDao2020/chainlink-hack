@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 import { ethers } from 'ethers';
+import { Notify } from 'quasar';
 
 const { utils } = ethers;
 
@@ -98,7 +99,9 @@ export async function setLotteryData({ commit, state }) {
   for (let i = 1; i <= drawNo; i += 1) {
     options.push(i);
   }
-  if (!selectedDrawNo) selectedDrawNo = drawNo;
+  if (!selectedDrawNo) {
+    selectedDrawNo = drawNo;
+  }
   const startTime = await state.contracts.Lottery.startTime();
   const duration = await state.contracts.Lottery.duration();
   let drawState = await state.contracts.Lottery.getDrawState(selectedDrawNo);
@@ -117,6 +120,21 @@ export async function setLotteryData({ commit, state }) {
   if (drawState === 0) drawState = 'Closed';
   if (drawState === 1) drawState = 'Open';
   if (drawState === 2) drawState = 'Calculating';
+
+  if (entries.length > 0) {
+    if (results.length > 0) {
+      Notify.create({
+        message: 'Winner! Congratulations!',
+        color: 'teal',
+        position: 'center',
+      });
+    } else {
+      Notify.create({
+        message: 'Better luck next time!',
+        position: 'center',
+      });
+    }
+  }
 
   const lotteryData = {
     startTime, duration, drawNo, selectedDrawNo, options, drawState, entries, results, drawRewards, drawNumbers,

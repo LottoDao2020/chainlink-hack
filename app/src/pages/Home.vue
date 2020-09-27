@@ -78,7 +78,7 @@ export default {
     }),
 
     isLoading() {
-      return this.proxyAddress === undefined;
+      return this.magayoInfo === undefined;
     },
 
     color() {

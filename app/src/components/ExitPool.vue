@@ -25,7 +25,7 @@
           v-model="selectedDrawNo"
           class="q-mb-md"
           filled
-          label="draw number to claim with"
+          label="Please select draw number"
           :options="options">
         </q-select>
         <div class="row">
@@ -42,6 +42,7 @@
             color="primary"
             label="Claim"
             :loading="isMainLoading"
+            :disabled="results.length === 0"
             @click="claim"
           />
         </div>
@@ -83,6 +84,7 @@ export default {
       // Lottery
       options: (state) => state.main.lottery.options,
       drawNo: (state) => state.main.lottery.drawNo,
+      results: (state) => state.main.lottery.results,
     }),
   },
 
