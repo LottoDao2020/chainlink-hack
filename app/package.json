@@ -8,7 +8,7 @@
   "author": "LottoDAO",
   "scripts": {
     "dev": "source .env && npx quasar dev",
-    "build": "git push && source .env && npx quasar build -m ssr",
+    "build": "source .env && npx quasar build -m ssr",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
     "deploy": "gh-pages -d dist/ssr"
