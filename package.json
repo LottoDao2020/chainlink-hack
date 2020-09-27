@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "build": "quasar build",
+    "build": "npx quasar build",
     "heroku-postbuild": "yarn && yarn build"
   },
   "dependencies": {
