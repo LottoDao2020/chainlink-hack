@@ -27,15 +27,15 @@
     "absolutePath": "@chainlink/contracts/src/v0.6/interfaces/PointerInterface.sol",
     "exportedSymbols": {
       "PointerInterface": [
-        4771
+        4775
       ]
     },
-    "id": 4772,
+    "id": 4776,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4765,
+        "id": 4769,
         "literals": [
           "solidity",
           "^",
@@ -52,9 +52,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 4771,
+        "id": 4775,
         "linearizedBaseContracts": [
-          4771
+          4775
         ],
         "name": "PointerInterface",
         "nodeType": "ContractDefinition",
@@ -63,7 +63,7 @@
             "body": null,
             "documentation": null,
             "functionSelector": "38cc4831",
-            "id": 4770,
+            "id": 4774,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -71,23 +71,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4766,
+              "id": 4770,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "75:2:13"
             },
             "returnParameters": {
-              "id": 4769,
+              "id": 4773,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4768,
+                  "id": 4772,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4770,
+                  "scope": 4774,
                   "src": "101:7:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -96,7 +96,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4767,
+                    "id": 4771,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "101:7:13",
@@ -112,14 +112,14 @@
               ],
               "src": "100:9:13"
             },
-            "scope": 4771,
+            "scope": 4775,
             "src": "56:54:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 4772,
+        "scope": 4776,
         "src": "25:87:13"
       }
     ],
@@ -129,15 +129,15 @@
     "absolutePath": "@chainlink/contracts/src/v0.6/interfaces/PointerInterface.sol",
     "exportedSymbols": {
       "PointerInterface": [
-        4771
+        4775
       ]
     },
-    "id": 4772,
+    "id": 4776,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4765,
+        "id": 4769,
         "literals": [
           "solidity",
           "^",
@@ -154,9 +154,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 4771,
+        "id": 4775,
         "linearizedBaseContracts": [
-          4771
+          4775
         ],
         "name": "PointerInterface",
         "nodeType": "ContractDefinition",
@@ -165,7 +165,7 @@
             "body": null,
             "documentation": null,
             "functionSelector": "38cc4831",
-            "id": 4770,
+            "id": 4774,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -173,23 +173,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4766,
+              "id": 4770,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "75:2:13"
             },
             "returnParameters": {
-              "id": 4769,
+              "id": 4773,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4768,
+                  "id": 4772,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4770,
+                  "scope": 4774,
                   "src": "101:7:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -198,7 +198,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4767,
+                    "id": 4771,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "101:7:13",
@@ -214,14 +214,14 @@
               ],
               "src": "100:9:13"
             },
-            "scope": 4771,
+            "scope": 4775,
             "src": "56:54:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 4772,
+        "scope": 4776,
         "src": "25:87:13"
       }
     ],
@@ -233,7 +233,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-09-27T05:11:06.114Z",
+  "updatedAt": "2020-09-27T12:30:22.090Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

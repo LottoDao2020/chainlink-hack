@@ -217,7 +217,7 @@
         "id": 2416,
         "nodeType": "ImportDirective",
         "scope": 2563,
-        "sourceUnit": 4506,
+        "sourceUnit": 4510,
         "src": "64:59:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -228,7 +228,7 @@
         "id": 2417,
         "nodeType": "ImportDirective",
         "scope": 2563,
-        "sourceUnit": 5855,
+        "sourceUnit": 5859,
         "src": "124:52:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -396,10 +396,10 @@
               "id": 2430,
               "name": "VRFConsumerBase",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4505,
+              "referencedDeclaration": 4509,
               "src": "359:15:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VRFConsumerBase_$4505",
+                "typeIdentifier": "t_contract$_VRFConsumerBase_$4509",
                 "typeString": "contract VRFConsumerBase"
               }
             },
@@ -414,10 +414,10 @@
               "id": 2432,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5854,
+              "referencedDeclaration": 5858,
               "src": "376:7:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Ownable_$5854",
+                "typeIdentifier": "t_contract$_Ownable_$5858",
                 "typeString": "contract Ownable"
               }
             },
@@ -427,10 +427,10 @@
           }
         ],
         "contractDependencies": [
-          4505,
-          4555,
-          5745,
-          5854
+          4509,
+          4559,
+          5749,
+          5858
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -438,10 +438,10 @@
         "id": 2562,
         "linearizedBaseContracts": [
           2562,
-          5854,
-          5745,
-          4505,
-          4555
+          5858,
+          5749,
+          4509,
+          4559
         ],
         "name": "RandomNumber",
         "nodeType": "ContractDefinition",
@@ -931,10 +931,10 @@
                   "name": "VRFConsumerBase",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 4505,
+                  "referencedDeclaration": 4509,
                   "src": "872:15:4",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_VRFConsumerBase_$4505_$",
+                    "typeIdentifier": "t_type$_t_contract$_VRFConsumerBase_$4509_$",
                     "typeString": "type(contract VRFConsumerBase)"
                   }
                 },
@@ -1145,7 +1145,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 5803,
+                  "referencedDeclaration": 5807,
                   "src": "1571:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1468,10 +1468,10 @@
                               "name": "LINK",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4459,
+                              "referencedDeclaration": 4463,
                               "src": "1915:4:4",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_LinkTokenInterface_$4763",
+                                "typeIdentifier": "t_contract$_LinkTokenInterface_$4767",
                                 "typeString": "contract LinkTokenInterface"
                               }
                             },
@@ -1482,7 +1482,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 4695,
+                            "referencedDeclaration": 4699,
                             "src": "1915:14:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -1651,7 +1651,7 @@
                       "name": "requestRandomness",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4457,
+                      "referencedDeclaration": 4461,
                       "src": "2023:17:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_uint256_$_t_uint256_$returns$_t_bytes32_$",
@@ -1772,7 +1772,7 @@
           },
           {
             "baseFunctions": [
-              4402
+              4406
             ],
             "body": {
               "id": 2560,
@@ -2226,7 +2226,7 @@
         "id": 2416,
         "nodeType": "ImportDirective",
         "scope": 2563,
-        "sourceUnit": 4506,
+        "sourceUnit": 4510,
         "src": "64:59:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -2237,7 +2237,7 @@
         "id": 2417,
         "nodeType": "ImportDirective",
         "scope": 2563,
-        "sourceUnit": 5855,
+        "sourceUnit": 5859,
         "src": "124:52:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -2405,10 +2405,10 @@
               "id": 2430,
               "name": "VRFConsumerBase",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4505,
+              "referencedDeclaration": 4509,
               "src": "359:15:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VRFConsumerBase_$4505",
+                "typeIdentifier": "t_contract$_VRFConsumerBase_$4509",
                 "typeString": "contract VRFConsumerBase"
               }
             },
@@ -2423,10 +2423,10 @@
               "id": 2432,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5854,
+              "referencedDeclaration": 5858,
               "src": "376:7:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Ownable_$5854",
+                "typeIdentifier": "t_contract$_Ownable_$5858",
                 "typeString": "contract Ownable"
               }
             },
@@ -2436,10 +2436,10 @@
           }
         ],
         "contractDependencies": [
-          4505,
-          4555,
-          5745,
-          5854
+          4509,
+          4559,
+          5749,
+          5858
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -2447,10 +2447,10 @@
         "id": 2562,
         "linearizedBaseContracts": [
           2562,
-          5854,
-          5745,
-          4505,
-          4555
+          5858,
+          5749,
+          4509,
+          4559
         ],
         "name": "RandomNumber",
         "nodeType": "ContractDefinition",
@@ -2940,10 +2940,10 @@
                   "name": "VRFConsumerBase",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 4505,
+                  "referencedDeclaration": 4509,
                   "src": "872:15:4",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_VRFConsumerBase_$4505_$",
+                    "typeIdentifier": "t_type$_t_contract$_VRFConsumerBase_$4509_$",
                     "typeString": "type(contract VRFConsumerBase)"
                   }
                 },
@@ -3154,7 +3154,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 5803,
+                  "referencedDeclaration": 5807,
                   "src": "1571:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -3477,10 +3477,10 @@
                               "name": "LINK",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4459,
+                              "referencedDeclaration": 4463,
                               "src": "1915:4:4",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_LinkTokenInterface_$4763",
+                                "typeIdentifier": "t_contract$_LinkTokenInterface_$4767",
                                 "typeString": "contract LinkTokenInterface"
                               }
                             },
@@ -3491,7 +3491,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 4695,
+                            "referencedDeclaration": 4699,
                             "src": "1915:14:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -3660,7 +3660,7 @@
                       "name": "requestRandomness",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4457,
+                      "referencedDeclaration": 4461,
                       "src": "2023:17:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_uint256_$_t_uint256_$returns$_t_bytes32_$",
@@ -3781,7 +3781,7 @@
           },
           {
             "baseFunctions": [
-              4402
+              4406
             ],
             "body": {
               "id": 2560,
@@ -4235,7 +4235,7 @@
     }
   },
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-09-27T06:18:53.409Z",
+  "updatedAt": "2020-09-27T12:31:55.060Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
