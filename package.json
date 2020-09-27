@@ -1,0 +1,37 @@
+{
+  "name": "LottoDAO",
+  "version": "0.1.0",
+  "description": "Lottery on-chain game that based on off-chain Magayo API",
+  "author": "LottoDAO",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "build": "quasar build",
+    "heroku-postbuild": "yarn && yarn build"
+  },
+  "dependencies": {
+    "@openzeppelin/gsn-provider": "0.1.10",
+    "@quasar/extras": "1.6.0",
+    "bnc-notify": "1.1.1",
+    "bnc-onboard": "1.4.0",
+    "ethers": "4.0.48",
+    "quasar": "1.9.11",
+    "web3": "1.2.6",
+    "@quasar/babel-preset-app": "1.1.9",
+    "compression": "^1.0.0",
+    "express": "^4.0.0",
+    "lru-cache": "5.1.1",
+    "vue": "2.6.11",
+    "vue-server-renderer": "2.6.11",
+    "vue-router": "3.1.6",
+    "vuex": "3.1.2"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "quasar": {
+    "ssr": true
+  }
+}
