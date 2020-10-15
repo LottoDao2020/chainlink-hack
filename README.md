@@ -1,3 +1,5 @@
+Chainlink Hackathon Entry: https://devpost.com/software/lottery-dao
+
 1. What's LottoDAO?
 
 LottoDAO is a decentralised lottery application based on the Ethereum blockchain and synchronised information from Global major lottery platforms.
